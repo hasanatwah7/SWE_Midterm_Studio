@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VECTR // SWE — Design-Engineered Midterm Prep & Speedrun Studio</title>
+  <!-- Tailwind CSS 3.4.17 -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Cairo"', 'sans-serif'],
+            arabic: ['"Cairo"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          backgroundImage: {
+            'radial-glow': 'radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.14), rgba(16, 185, 129, 0.05) 45%, transparent 70%)',
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- GSAP 3.12.5 + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      background-color: #050608;
+      color: #F5F5F5;
+      font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Subtle noise mesh overlay */
+    .bg-noise-mesh {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+    .glass-panel {
+      background-color: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+    }
+    .glass-nav {
+      background-color: rgba(23, 23, 23, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.10);
+    }
+    .text-gradient-display {
+      background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.60) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.03em;
+    }
+    .rtl-arabic {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl !important;
+      text-align: right !important;
+      unicode-bidi: isolate;
+      line-height: 1.82;
+    }
+    .ltr-inline-chip {
+      font-family: 'JetBrains Mono', monospace;
+      direction: ltr;
+      unicode-bidi: embed;
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #7DD3FC;
+      padding: 0.06rem 0.42rem;
+      border-radius: 0.375rem;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin: 0 0.14rem;
+    }
+    .bento-spotlight {
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-spotlight::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 0%), rgba(56, 189, 248, 0.09), transparent 45%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .bento-spotlight:hover::before {
+      opacity: 1;
+    }
+    .view-section {
+      display: none;
+    }
+    .view-section.active-view {
+      display: block;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col relative selection:bg-sky-500/30 selection:text-sky-200 bg-noise-mesh">
+
+  <!-- Soft Radial Ambient Glow behind Hero -->
+  <div class="pointer-events-none fixed inset-0 bg-radial-glow opacity-95 z-0" aria-hidden="true"></div>
+
+  <!-- FLOATING GLASSMORPHIC NAVBAR -->
+  <header class="sticky top-4 z-50 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl glass-nav rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <button type="button" id="brandLogoBtn" class="group flex items-center gap-3 text-left focus:outline-none">
+        <div class="relative h-10 w-10 rounded-xl bg-gradient-to-br from-sky-400/35 via-emerald-400/20 to-amber-400/35 p-[1px] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)] transition-transform duration-300 group-hover:scale-105">
+          <div class="flex h-full w-full items-center justify-center rounded-[11px] bg-neutral-950/90">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round" />
+              <path d="M7.5 9.5L12 14.5L16.5 9.5" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="12" cy="7" r="1.5" fill="#F8FAFC" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5 font-extrabold tracking-tight text-white text-base">
+            <span>VECTR</span>
+            <span class="text-sky-400 font-mono">//</span>
+            <span>SWE</span>
+          </div>
+          <span class="block font-mono text-[10px] uppercase tracking-widest text-neutral-400">
+            151 CHOSEN QUESTIONS
+          </span>
+        </div>
+      </button>
+
+      <!-- Multi-Page Switcher Pills -->
+      <nav class="flex items-center gap-1 rounded-xl bg-white/[0.03] p-1 border border-white/10" aria-label="Main Navigation">
+        <button type="button" data-page-btn="dashboard" class="nav-pill-btn flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 bg-white/[0.1] text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)]">
+          <i data-lucide="layout-dashboard" class="h-4 w-4 text-sky-400"></i>
+          <span>Dashboard</span>
+        </button>
+        <button type="button" data-page-btn="solving" class="nav-pill-btn flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 text-neutral-400 hover:text-white">
+          <i data-lucide="layers" class="h-4 w-4 text-emerald-400"></i>
+          <span>Solving Mode</span>
+          <span class="font-mono text-[11px] rounded-md bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 border border-emerald-500/20">151</span>
+        </button>
+        <button type="button" data-page-btn="focus" class="nav-pill-btn flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 text-neutral-400 hover:text-white">
+          <i data-lucide="zap" class="h-4 w-4 text-amber-400"></i>
+          <span>Focus & Speedrun</span>
+        </button>
+      </nav>
+
+      <!-- Telemetry & Audio Controls -->
+      <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-2 rounded-xl bg-white/[0.03] border border-white/10 px-3 py-1.5 font-mono text-xs text-neutral-300">
+          <i data-lucide="sparkles" class="h-3.5 w-3.5 text-sky-400"></i>
+          <span>Mastery:</span>
+          <span class="font-bold text-white" id="navMasteryCounter">0/151</span>
+        </div>
+
+        <button type="button" id="sfxToggleBtn" class="glass-panel rounded-xl px-3 py-2 text-xs font-medium text-neutral-300 hover:text-white hover:border-white/20 transition-colors flex items-center gap-1.5">
+          <i data-lucide="volume-2" class="h-4 w-4 text-sky-400" id="sfxIcon"></i>
+          <span id="sfxLabel" class="hidden sm:inline">SFX On</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       VIEW 1: DASHBOARD (Hero Timeline + Bento Grid + Scroll-Scrubbed Section)
+       ========================================================================= -->
+  <main id="view-dashboard" class="view-section active-view relative z-10 flex-1">
+    <!-- 1. HERO SECTION (GSAP Staggered Entrance Timeline) -->
+    <section class="py-24 sm:py-32 px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-5xl text-center">
+        <div class="gsap-hero-item inline-flex items-center gap-2 rounded-full bg-white/[0.04] border border-white/10 px-4 py-1.5 text-xs font-mono text-sky-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] mb-6">
+          <i data-lucide="sparkles" class="h-3.5 w-3.5 text-amber-400"></i>
+          <span>CHOSEN MIDTERM COLLECTION • CHAPTERS 1–4 CURATED</span>
+        </div>
+
+        <h1 class="gsap-hero-item text-4xl sm:text-6xl lg:text-7xl font-extrabold text-gradient-display leading-[1.08] tracking-tight mb-6">
+          Master Software Engineering.<br />
+          Engineered for Speed &amp; Clarity.
+        </h1>
+
+        <p class="gsap-hero-item rtl-arabic mx-auto max-w-3xl text-base sm:text-lg text-neutral-300 mb-9" dir="rtl">
+          بيئة تدريب تفاعلية مصممة على طراز <span class="ltr-inline-chip">Linear &amp; Raycast</span> تضم <strong class="text-white">151 سؤال مختار</strong> لامتحان الميدتيرم، مترتبة تنازلياً حسب <strong class="text-amber-300">أهميتها وتوقعات الامتحان</strong> للـ 4 فصول المقررة (<span class="ltr-inline-chip">Intro, Processes, Agile, Requirements</span>) مع شرح تفصيلي فوري بالـ <span class="ltr-inline-chip">RTL</span> وتايمر احترافي.
+        </p>
+
+        <div class="gsap-hero-item flex flex-wrap items-center justify-center gap-3.5">
+          <button type="button" id="heroLaunchSolvingBtn" class="rounded-xl bg-white text-neutral-950 hover:bg-neutral-200 px-6 py-3.5 text-sm font-bold tracking-tight transition-transform active:scale-95 flex items-center gap-2 shadow-lg shadow-white/10">
+            <i data-lucide="layers" class="h-4 w-4 text-sky-600"></i>
+            <span>Launch Solving Mode (151 Chosen Qs)</span>
+            <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          </button>
+
+          <button type="button" id="heroLaunchSpeedrunBtn" class="glass-panel hover:bg-white/[0.08] hover:border-amber-400/40 rounded-xl px-6 py-3.5 text-sm font-bold text-white transition-all flex items-center gap-2">
+            <i data-lucide="zap" class="h-4 w-4 text-amber-400"></i>
+            <span>Enter Focus &amp; Speedrun Arena</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ASYMMETRIC BENTO GRID SHOWCASE (ScrollTrigger Staggered Reveal + Interactive Micro-UIs) -->
+    <section class="py-24 sm:py-28 px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div>
+            <span class="font-mono text-xs uppercase tracking-widest text-sky-400 block mb-2">
+              INTERACTIVE TELEMETRY &amp; BENTO ARCHITECTURE
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gradient-display tracking-tight">
+              Command Your Midterm Preparation
+            </h2>
+          </div>
+          <p class="rtl-arabic text-sm sm:text-base text-neutral-400 max-w-md m-0" dir="rtl">
+            تفاعل مع الكروت تحت لاختبار التايمر، تصفية مستويات الأهمية، أو القفز المباشر لأي شابتر من الـ 4 شباتر المقررة.
+          </p>
+        </div>
+
+        <div class="gsap-bento-grid grid grid-cols-1 md:grid-cols-4 gap-5">
+          <!-- Bento Card 1 (col-span-2): Interactive Priority Tier Matrix -->
+          <div class="gsap-bento-card bento-spotlight md:col-span-2 glass-panel rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-4">
+                <span class="inline-flex items-center gap-1.5 font-mono text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                  <i data-lucide="flame" class="h-3.5 w-3.5"></i>
+                  <span>PRIORITY MATRIX ENGINE</span>
+                </span>
+                <span class="font-mono text-xs text-neutral-400">INTERACTIVE FILTER</span>
+              </div>
+
+              <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight mb-2">
+                Sorted by Midterm Exam Probability
+              </h3>
+              <p class="rtl-arabic text-sm text-neutral-400 mb-5" dir="rtl">
+                اضغط على أي <span class="ltr-inline-chip">Priority Tier</span> لمعاينة عدد الأسئلة ونسبة توقعها في الامتحان ثم ابدأ حلها فوراً:
+              </p>
+
+              <!-- Interactive Tier Selector Micro-UI -->
+              <div class="grid grid-cols-3 gap-2.5 mb-5" id="bentoTierSelector">
+                <button type="button" data-bento-tier="1" class="bento-tier-btn rounded-2xl border p-3 text-left transition-all text-amber-300 border-amber-500/40 bg-amber-500/10">
+                  <div class="font-mono text-xs opacity-80">92–99%</div>
+                  <div class="font-mono text-2xl font-extrabold text-white my-0.5">76</div>
+                  <div class="text-[11px] font-semibold truncate">Tier 1: Must-Know</div>
+                </button>
+                <button type="button" data-bento-tier="2" class="bento-tier-btn rounded-2xl border p-3 text-left transition-all border-white/10 bg-white/[0.02] text-neutral-400 hover:text-white">
+                  <div class="font-mono text-xs opacity-80">84–86%</div>
+                  <div class="font-mono text-2xl font-extrabold text-white my-0.5">61</div>
+                  <div class="text-[11px] font-semibold truncate">Tier 2: High-Yield</div>
+                </button>
+                <button type="button" data-bento-tier="3" class="bento-tier-btn rounded-2xl border p-3 text-left transition-all border-white/10 bg-white/[0.02] text-neutral-400 hover:text-white">
+                  <div class="font-mono text-xs opacity-80">74%</div>
+                  <div class="font-mono text-2xl font-extrabold text-white my-0.5">14</div>
+                  <div class="text-[11px] font-semibold truncate">Tier 3: Foundation</div>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 pt-4 border-t border-white/10">
+              <span class="rtl-arabic text-xs text-neutral-300" id="bentoTierDescText" dir="rtl">
+                🔥 يشمل أهم 76 سؤال لا يخلو منهم امتحان الميدتيرم.
+              </span>
+              <button type="button" id="bentoLaunchSelectedTierBtn" class="rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 px-3.5 py-2 text-xs font-bold text-white flex items-center gap-1.5 shrink-0">
+                <span id="bentoLaunchTierLabel">Solve Tier 1</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bento Card 2 (col-span-1): Live Telemetry & Mastery Pulse -->
+          <div class="gsap-bento-card bento-spotlight md:col-span-1 glass-panel rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-flex items-center gap-1.5 font-mono text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
+                  <span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span>LIVE TELEMETRY</span>
+                </span>
+                <i data-lucide="activity" class="h-4 w-4 text-neutral-400"></i>
+              </div>
+
+              <div class="font-mono text-4xl font-extrabold text-white tracking-tight mb-1">
+                <span id="bentoSolvedCount">0</span><span class="text-lg text-neutral-500">/151</span>
+              </div>
+              <p class="text-xs text-neutral-400 mb-4">
+                Chosen Questions Completed • Accuracy: <strong class="text-emerald-300 font-mono" id="bentoAccuracyPct">0%</strong>
+              </p>
+
+              <div class="space-y-2 text-xs font-mono">
+                <div class="flex justify-between rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-emerald-300">
+                  <span>✓ Correct Verdict</span>
+                  <span class="font-bold" id="bentoCorrectCount">0</span>
+                </div>
+                <div class="flex justify-between rounded-xl bg-rose-500/10 border border-rose-500/20 px-3 py-2 text-rose-300">
+                  <span>✗ Needs Review</span>
+                  <span class="font-bold" id="bentoWrongCount">0</span>
+                </div>
+                <div class="flex justify-between rounded-xl bg-amber-500/10 border border-amber-500/20 px-3 py-2 text-amber-300">
+                  <span>★ Bookmarked</span>
+                  <span class="font-bold" id="bentoSavedCount">0</span>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" id="bentoResetTelemetryBtn" class="mt-5 w-full rounded-xl bg-white/[0.03] hover:bg-rose-500/15 border border-white/10 hover:border-rose-500/30 py-2 text-xs font-semibold text-neutral-400 hover:text-rose-300 transition-colors flex items-center justify-center gap-1.5">
+              <i data-lucide="rotate-ccw" class="h-3.5 w-3.5"></i>
+              <span>Reset Telemetry</span>
+            </button>
+          </div>
+
+          <!-- Bento Card 3 (col-span-1): Interactive Speedrun Clock Configurator -->
+          <div class="gsap-bento-card bento-spotlight md:col-span-1 glass-panel rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-flex items-center gap-1.5 font-mono text-xs text-sky-300 bg-sky-500/10 border border-sky-500/20 px-2.5 py-1 rounded-full">
+                  <i data-lucide="timer" class="h-3.5 w-3.5"></i>
+                  <span>SPEEDRUN CLOCK</span>
+                </span>
+              </div>
+
+              <h3 class="text-lg font-bold text-white mb-1">Configurable Timer</h3>
+              <p class="rtl-arabic text-xs text-neutral-400 mb-4" dir="rtl">
+                اختار سرعة التايمر اللي تناسبك (لكل سؤال أو للمجموعة أو اقفله خالص):
+              </p>
+
+              <!-- Interactive Preset Pills -->
+              <div class="grid grid-cols-2 gap-2 mb-4 font-mono text-xs" id="bentoTimerPresetGroup">
+                <button type="button" data-preset-sec="15" class="bento-preset-btn rounded-xl border py-2 font-bold transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white">00:15 / Q</button>
+                <button type="button" data-preset-sec="30" class="bento-preset-btn rounded-xl border py-2 font-bold transition-all bg-sky-500/20 border-sky-400 text-white">00:30 / Q</button>
+                <button type="button" data-preset-sec="45" class="bento-preset-btn rounded-xl border py-2 font-bold transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white">00:45 / Q</button>
+                <button type="button" data-preset-sec="60" class="bento-preset-btn rounded-xl border py-2 font-bold transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white">00:60 / Q</button>
+              </div>
+            </div>
+
+            <button type="button" id="bentoLaunchSpeedrunPresetBtn" class="w-full rounded-xl bg-sky-500 hover:bg-sky-400 text-neutral-950 font-bold py-2.5 text-xs transition-colors flex items-center justify-center gap-1.5">
+              <i data-lucide="play" class="h-3.5 w-3.5 fill-current"></i>
+              <span id="bentoLaunchSpeedrunLabel">Launch 30s Speedrun</span>
+            </button>
+          </div>
+
+          <!-- Bento Card 4 (col-span-2): Interactive Chapter Matrix (Ch 1–4) -->
+          <div class="gsap-bento-card bento-spotlight md:col-span-2 glass-panel rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="inline-flex items-center gap-1.5 font-mono text-xs text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-full">
+                  <i data-lucide="book-open" class="h-3.5 w-3.5"></i>
+                  <span>4 MIDTERM CHAPTERS</span>
+                </span>
+                <span class="font-mono text-xs text-neutral-400">CURATED SCOPE</span>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4" id="bentoChapterSelector">
+                <button type="button" data-bento-ch="1" class="bento-ch-btn rounded-2xl border p-3 text-left transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white">
+                  <div class="font-mono text-xs text-sky-400 font-bold">CH 01</div>
+                  <div class="font-mono text-xl font-extrabold text-white my-0.5">19 <span class="text-xs font-normal text-neutral-400">Qs</span></div>
+                  <div class="text-[11px] font-semibold truncate">Introduction</div>
+                </button>
+                <button type="button" data-bento-ch="2" class="bento-ch-btn rounded-2xl border p-3 text-left transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white">
+                  <div class="font-mono text-xs text-sky-400 font-bold">CH 02</div>
+                  <div class="font-mono text-xl font-extrabold text-white my-0.5">44 <span class="text-xs font-normal text-neutral-400">Qs</span></div>
+                  <div class="text-[11px] font-semibold truncate">Processes</div>
+                </button>
+                <button type="button" data-bento-ch="3" class="bento-ch-btn rounded-2xl border p-3 text-left transition-all bg-white/[0.09] border-white/30 text-white">
+                  <div class="font-mono text-xs text-sky-400 font-bold">CH 03</div>
+                  <div class="font-mono text-xl font-extrabold text-white my-0.5">46 <span class="text-xs font-normal text-neutral-400">Qs</span></div>
+                  <div class="text-[11px] font-semibold truncate">Agile Dev</div>
+                </button>
+                <button type="button" data-bento-ch="4" class="bento-ch-btn rounded-2xl border p-3 text-left transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white">
+                  <div class="font-mono text-xs text-sky-400 font-bold">CH 04</div>
+                  <div class="font-mono text-xl font-extrabold text-white my-0.5">42 <span class="text-xs font-normal text-neutral-400">Qs</span></div>
+                  <div class="text-[11px] font-semibold truncate">Requirements</div>
+                </button>
+              </div>
+
+              <div class="rounded-2xl bg-white/[0.02] border border-white/10 p-4">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-sm text-white" id="bentoChTitle">Chapter 3: Agile Software Development</span>
+                  <span class="font-mono text-xs text-sky-300" id="bentoChCount">46 Chosen Questions</span>
+                </div>
+                <p class="rtl-arabic text-xs sm:text-sm text-neutral-300 m-0" id="bentoChSummary" dir="rtl">
+                  قيم الـ Agile Manifesto، مقارنة الـ Plan-driven والـ Agile، ممارسات الـ XP (Refactoring, TDD, Pair Programming)، وأدوار ومراحل الـ Scrum.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-4 mt-4 border-t border-white/10">
+              <span class="font-mono text-xs text-neutral-400" id="bentoChSelectedLabel">Selected: Chapter 03</span>
+              <div class="flex items-center gap-2">
+                <button type="button" id="bentoSolveChBtn" class="rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 px-3.5 py-2 text-xs font-bold text-white">
+                  Solve Ch 3 in Pages
+                </button>
+                <button type="button" id="bentoSpeedrunChBtn" class="rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 px-3.5 py-2 text-xs font-bold text-amber-300">
+                  ⚡ Speedrun Ch 3
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Card 5 (col-span-2): Live Mini Instant Diagnostic Sandbox -->
+          <div class="gsap-bento-card bento-spotlight md:col-span-2 glass-panel rounded-3xl p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex items-center gap-1.5 font-mono text-xs text-rose-300 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-full">
+                  <i data-lucide="terminal" class="h-3.5 w-3.5"></i>
+                  <span>LIVE INSTANT VERDICT PREVIEW</span>
+                </span>
+                <span class="font-mono text-xs text-amber-300">98% EXAM PROBABILITY</span>
+              </div>
+
+              <p class="font-bold text-white text-sm sm:text-base mb-3" dir="ltr">
+                Q: How is plan-driven development different from agile development?
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3" dir="ltr" id="bentoMiniQuizGroup">
+                <button type="button" data-mini-opt="0" class="bento-mini-opt rounded-xl border px-3 py-2 text-left text-xs font-medium transition-all flex items-center gap-2 bg-white/[0.03] hover:bg-white/[0.07] border-white/10 text-neutral-200">
+                  <span class="font-mono font-bold">A</span>
+                  <span class="truncate">Outputs decided via negotiation</span>
+                </button>
+                <button type="button" data-mini-opt="1" class="bento-mini-opt rounded-xl border px-3 py-2 text-left text-xs font-medium transition-all flex items-center gap-2 bg-white/[0.03] hover:bg-white/[0.07] border-white/10 text-neutral-200">
+                  <span class="font-mono font-bold">B</span>
+                  <span class="truncate">Spec &amp; design are interleaved</span>
+                </button>
+                <button type="button" data-mini-opt="2" class="bento-mini-opt rounded-xl border px-3 py-2 text-left text-xs font-medium transition-all flex items-center gap-2 bg-white/[0.03] hover:bg-white/[0.07] border-white/10 text-neutral-200">
+                  <span class="font-mono font-bold">C</span>
+                  <span class="truncate">Iteration occurs within activities</span>
+                </button>
+                <button type="button" data-mini-opt="3" class="bento-mini-opt rounded-xl border px-3 py-2 text-left text-xs font-medium transition-all flex items-center gap-2 bg-white/[0.03] hover:bg-white/[0.07] border-white/10 text-neutral-200">
+                  <span class="font-mono font-bold">D</span>
+                  <span class="truncate">All of the mentioned</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="rounded-2xl bg-neutral-950/80 border border-white/10 p-3.5" dir="rtl" id="bentoMiniQuizFeedback">
+              <p class="rtl-arabic text-xs text-neutral-400 m-0">
+                👆 جرب تختار إجابة فوق عشان تشوف نظام الشرح الفوري بالـ <span class="ltr-inline-chip">RTL</span> قبل ما تدخل تحل.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PINNED / SCRUBBED STORYTELLING SECTION (ScrollTrigger scrub: 1) -->
+    <section class="gsap-scrub-section py-24 sm:py-28 px-4 sm:px-6 lg:px-8 border-y border-white/10 bg-neutral-950/40">
+      <div class="mx-auto max-w-6xl">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+          <span class="font-mono text-xs uppercase tracking-widest text-amber-400 block mb-2">
+            SCROLL-SCRUBBED EXAM BLUEPRINT • CHOREOGRAPHED BY GSAP
+          </span>
+          <h2 class="text-3xl sm:text-5xl font-extrabold text-gradient-display tracking-tight mb-4">
+            Four Pillars of the SWE Midterm
+          </h2>
+          <p class="rtl-arabic text-sm sm:text-base text-neutral-400 m-0" dir="rtl">
+            مرر بالماوس لأسفل لاستعراض خريطة المفاهيم الحرجة في الـ 4 فصول وكيفية الربط بينهم في أسئلة الامتحان.
+          </p>
+        </div>
+
+        <div class="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <!-- Vertical Scrubbed Progress Indicator (GPU-composited scaleY) -->
+          <div class="hidden md:flex md:col-span-1 flex-col items-center h-full pt-4">
+            <div class="w-1.5 h-80 bg-white/[0.06] rounded-full overflow-hidden relative">
+              <div class="gsap-scrub-progress w-full h-full bg-gradient-to-b from-sky-400 via-emerald-400 to-amber-400 origin-top" style="transform: scaleY(0.18);"></div>
+            </div>
+          </div>
+
+          <!-- 4 Scrubbed Stage Cards -->
+          <div class="md:col-span-11 grid grid-cols-1 md:grid-cols-2 gap-5" id="scrubStagesContainer">
+            <div class="gsap-scrub-stage glass-panel rounded-3xl p-6 border border-white/10 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="font-mono text-xs font-bold text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2.5 py-1 rounded-md">STAGE 01</span>
+                  <span class="font-mono text-xs text-neutral-400">19 Chosen Questions</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Chapter 1: Introduction</h3>
+                <p class="text-xs font-mono text-neutral-400 mb-3">Professional Software Development &amp; Ethics</p>
+                <p class="rtl-arabic text-sm text-neutral-300 mb-5" dir="rtl">
+                  أساسيات هندسة البرمجيات، الفرق الجوهري بين الـ <span class="ltr-inline-chip">Generic &amp; Customized</span>، خصائص الـ <span class="ltr-inline-chip">Good Software</span>، وأخلاقيات المهنة.
+                </p>
+              </div>
+              <button type="button" data-stage-launch="1" class="w-full rounded-xl bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 py-2.5 text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors">
+                <span>Practice Stage 01 Questions</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+
+            <div class="gsap-scrub-stage glass-panel rounded-3xl p-6 border border-white/10 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="font-mono text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">STAGE 02</span>
+                  <span class="font-mono text-xs text-neutral-400">44 Chosen Questions</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Chapter 2: Software Processes</h3>
+                <p class="text-xs font-mono text-neutral-400 mb-3">Waterfall, Incremental, RUP &amp; Prototyping</p>
+                <p class="rtl-arabic text-sm text-neutral-300 mb-5" dir="rtl">
+                  نماذج الـ <span class="ltr-inline-chip">Waterfall &amp; Incremental</span>، أنشطة الـ <span class="ltr-inline-chip">Process</span> الأربعة، الـ <span class="ltr-inline-chip">Throw-away Prototyping</span>، ومراحل ومنظورات الـ <span class="ltr-inline-chip">RUP</span>.
+                </p>
+              </div>
+              <button type="button" data-stage-launch="2" class="w-full rounded-xl bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 py-2.5 text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors">
+                <span>Practice Stage 02 Questions</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+
+            <div class="gsap-scrub-stage glass-panel rounded-3xl p-6 border border-white/10 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md">STAGE 03</span>
+                  <span class="font-mono text-xs text-neutral-400">46 Chosen Questions</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Chapter 3: Agile Development</h3>
+                <p class="text-xs font-mono text-neutral-400 mb-3">Agile Manifesto, XP &amp; Scrum</p>
+                <p class="rtl-arabic text-sm text-neutral-300 mb-5" dir="rtl">
+                  قيم الـ <span class="ltr-inline-chip">Agile Manifesto</span>، مقارنة الـ <span class="ltr-inline-chip">Plan-driven vs Agile</span>، ممارسات الـ <span class="ltr-inline-chip">XP</span>، وأدوار ومراحل الـ <span class="ltr-inline-chip">Scrum</span>.
+                </p>
+              </div>
+              <button type="button" data-stage-launch="3" class="w-full rounded-xl bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 py-2.5 text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors">
+                <span>Practice Stage 03 Questions</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+
+            <div class="gsap-scrub-stage glass-panel rounded-3xl p-6 border border-white/10 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="font-mono text-xs font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-md">STAGE 04</span>
+                  <span class="font-mono text-xs text-neutral-400">42 Chosen Questions</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1">Chapter 4: Requirements Engineering</h3>
+                <p class="text-xs font-mono text-neutral-400 mb-3">Functional/Non-Functional, SRS &amp; Validation</p>
+                <p class="rtl-arabic text-sm text-neutral-300 mb-5" dir="rtl">
+                  الـ <span class="ltr-inline-chip">Functional &amp; Non-functional</span>، وثيقة الـ <span class="ltr-inline-chip">SRS</span>، تقنيات الـ <span class="ltr-inline-chip">Elicitation (Ethnography)</span>، وفحوصات الـ <span class="ltr-inline-chip">Validation</span>.
+                </p>
+              </div>
+              <button type="button" data-stage-launch="4" class="w-full rounded-xl bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 py-2.5 text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors">
+                <span>Practice Stage 04 Questions</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       VIEW 2: SOLVING MODE (Paginated Workbench + Optional Timer Engine)
+       ========================================================================= -->
+  <main id="view-solving" class="view-section relative z-10 flex-1 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-5xl">
+      <!-- Glassmorphic Filter & Optional Timer Command Dock -->
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <select id="solveChapterSelect" aria-label="Filter by Chapter" class="rounded-xl bg-neutral-900/90 border border-white/10 px-3 py-2.5 text-xs font-semibold text-white focus:outline-none focus:border-sky-400">
+              <option value="all">All Chapters (151)</option>
+              <option value="1">Ch 1: Introduction (19)</option>
+              <option value="2">Ch 2: Software Processes (44)</option>
+              <option value="3">Ch 3: Agile Development (46)</option>
+              <option value="4">Ch 4: Requirements Eng. (42)</option>
+            </select>
+
+            <select id="solveTierSelect" aria-label="Filter by Priority Tier" class="rounded-xl bg-neutral-900/90 border border-white/10 px-3 py-2.5 text-xs font-semibold text-white focus:outline-none focus:border-sky-400">
+              <option value="all">All Priority Tiers</option>
+              <option value="1">🔥 Tier 1: Must-Know (76)</option>
+              <option value="2">⚡ Tier 2: High-Yield (61)</option>
+              <option value="3">📘 Tier 3: Foundations (14)</option>
+              <option value="quirk">⚠️ Exam Key Alerts (3)</option>
+            </select>
+
+            <select id="solveStatusSelect" aria-label="Filter by Status" class="rounded-xl bg-neutral-900/90 border border-white/10 px-3 py-2.5 text-xs font-semibold text-white focus:outline-none focus:border-sky-400">
+              <option value="all">Status: All Chosen</option>
+              <option value="unanswered">Unanswered Only</option>
+              <option value="wrong">Mistakes Only (✗)</option>
+              <option value="bookmarked">Saved (★)</option>
+            </select>
+
+            <div class="sm:col-span-2 relative">
+              <input type="search" id="solveSearchInput" placeholder="Search Scrum, RUP, Refactoring, SRS, Ethnography..." class="w-full rounded-xl bg-neutral-900/90 border border-white/10 px-3.5 py-2 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-sky-400" />
+            </div>
+
+            <select id="solvePageSizeSelect" aria-label="Page Size" class="rounded-xl bg-neutral-900/90 border border-white/10 px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-sky-400">
+              <option value="10" selected>10 / Page</option>
+              <option value="20">20 / Page</option>
+              <option value="50">50 / Page</option>
+              <option value="151">All 151</option>
+            </select>
+          </div>
+
+          <!-- Optional Timer Box -->
+          <div class="lg:col-span-5 rounded-2xl bg-neutral-950/75 border border-white/10 p-3.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="font-mono text-[10px] uppercase tracking-wider text-neutral-400 block mb-1">
+                  OPTIONAL TIMER ENGINE
+                </span>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <select id="solveTimerModeSelect" aria-label="Timer Mode" class="rounded-lg bg-white/[0.05] border border-white/10 px-2.5 py-1.5 text-xs font-semibold text-white">
+                    <option value="off" class="bg-neutral-900">⏱️ Timer: Disabled</option>
+                    <option value="question" class="bg-neutral-900">⏱️ Per Question</option>
+                    <option value="group" class="bg-neutral-900">⏱️ Per Group (Page)</option>
+                  </select>
+
+                  <select id="solveTimerDurationSelect" aria-label="Timer Seconds" class="hidden rounded-lg bg-white/[0.05] border border-white/10 px-2 py-1.5 text-xs font-mono text-sky-300">
+                    <option value="30" class="bg-neutral-900">30s</option>
+                    <option value="45" selected class="bg-neutral-900">45s</option>
+                    <option value="60" class="bg-neutral-900">60s</option>
+                    <option value="90" class="bg-neutral-900">90s</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <div id="solveTimerReadout" class="font-mono text-lg font-extrabold px-3 py-1 rounded-xl border bg-white/[0.03] border-white/10 text-neutral-500">
+                  OFF
+                </div>
+                <button type="button" id="solveTimerPauseBtn" class="hidden rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 px-2.5 py-1.5 text-xs font-mono text-white" title="Pause / Resume Timer">⏸</button>
+                <button type="button" id="solveTimerResetBtn" class="hidden rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 px-2.5 py-1.5 text-xs font-mono text-white" title="Reset Timer">↺</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-white/10 text-xs">
+          <span class="font-mono text-neutral-300" id="solveSummaryText">Showing 1–10 of 151 Chosen Questions</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="solveRevealPageBtn" class="rounded-lg bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 px-3 py-1.5 font-semibold text-neutral-200">
+              👁️ Reveal Page Explanations
+            </button>
+            <button type="button" id="solveResetPageBtn" class="rounded-lg bg-white/[0.04] hover:bg-white/[0.1] border border-white/10 px-3 py-1.5 font-semibold text-neutral-200">
+              ↺ Reset Page
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questions Stack -->
+      <div id="solvingListContainer" class="space-y-5"></div>
+
+      <!-- Pagination Footer -->
+      <div id="solvingPaginationBar" class="glass-panel rounded-2xl p-4 mt-8 flex flex-wrap items-center justify-between gap-3">
+        <button type="button" id="solvePrevPageBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.1] disabled:opacity-40 border border-white/10 px-4 py-2 text-xs font-bold text-white">
+          ← Previous Page
+        </button>
+        <div id="solvePageIndicator" class="font-mono text-xs text-neutral-300">Page 1 of 16</div>
+        <button type="button" id="solveNextPageBtn" class="rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-40 text-neutral-950 px-4 py-2 text-xs font-bold">
+          Next Page →
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       VIEW 3: FOCUS & SPEEDRUN ARENA (One-by-One + Speedrun Clock)
+       ========================================================================= -->
+  <main id="view-focus" class="view-section relative z-10 flex-1 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl">
+      <!-- Speedrun HUD -->
+      <div class="glass-panel rounded-3xl p-5 sm:p-6 mb-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                ⚡ FOCUS &amp; SPEEDRUN ARENA
+              </span>
+              <span id="focusPositionBadge" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-white/[0.06] text-white border border-white/10">
+                Q 1 / 151
+              </span>
+              <span id="focusStreakBadge" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                🔥 Streak: 0
+              </span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <select id="focusDeckSelect" aria-label="Select Focus Deck" class="rounded-xl bg-neutral-900 border border-white/10 px-3 py-2 text-xs font-semibold text-white">
+                <option value="all">Deck: All 151 Chosen Questions</option>
+                <option value="tier1">🔥 Deck: Tier 1 Must-Know (76 Qs)</option>
+                <option value="ch1">Deck: Chapter 1 Only (19 Qs)</option>
+                <option value="ch2">Deck: Chapter 2 Only (44 Qs)</option>
+                <option value="ch3">Deck: Chapter 3 Only (46 Qs)</option>
+                <option value="ch4">Deck: Chapter 4 Only (42 Qs)</option>
+                <option value="mistakes">Deck: Mistakes Only (✗)</option>
+                <option value="saved">Deck: Saved Only (★)</option>
+              </select>
+
+              <select id="focusTimerModeSelect" aria-label="Select Speedrun Timer" class="rounded-xl bg-neutral-900 border border-white/10 px-3 py-2 text-xs font-semibold text-sky-300">
+                <option value="off">⏱️ Timer: Off (Relaxed Focus)</option>
+                <option value="q15">⚡ Speedrun: 15s / Question</option>
+                <option value="q30" selected>⚡ Speedrun: 30s / Question</option>
+                <option value="q45">⏱️ Paced: 45s / Question</option>
+                <option value="q60">⏱️ Exam: 60s / Question</option>
+                <option value="blitz5">🏁 5-Min Blitz (Group)</option>
+                <option value="blitz10">🏁 10-Min Sprint (Group)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Timer Readout & Controls -->
+          <div class="flex items-center gap-2">
+            <div id="focusTimerReadout" class="font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-amber-500/15 border-amber-500/30 text-amber-300">
+              00:30
+            </div>
+            <button type="button" id="focusTimerToggleBtn" class="rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 px-3.5 py-2.5 text-xs font-bold text-white">
+              ▶ Start
+            </button>
+            <button type="button" id="focusTimerResetBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 px-3 py-2.5 text-xs font-mono text-neutral-300 hover:text-white" title="Reset Timer">
+              ↺
+            </button>
+          </div>
+        </div>
+
+        <!-- Scrubber Dots -->
+        <div class="mt-4 pt-3 border-t border-white/10">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2 text-[11px] font-mono text-neutral-400">
+            <span>KEYBOARD: [1–4] SELECT OPTION • [← / →] PREV / NEXT QUESTION</span>
+            <label class="inline-flex items-center gap-2 cursor-pointer text-neutral-300">
+              <input type="checkbox" id="focusAutoAdvanceCheck" class="rounded border-white/20 bg-neutral-900" />
+              <span>Auto-Advance on Correct</span>
+            </label>
+          </div>
+          <div id="focusDotsContainer" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto py-1"></div>
+        </div>
+      </div>
+
+      <!-- Active Single Question Card -->
+      <div id="focusSingleQuestionWrap"></div>
+
+      <!-- Focus Navigation Bar -->
+      <div class="glass-panel rounded-2xl p-4 mt-5 flex flex-wrap items-center justify-between gap-3">
+        <button type="button" id="focusPrevBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-4 py-2.5 text-xs font-bold text-white">
+          ← Previous
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="focusRevealSingleBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-3.5 py-2.5 text-xs font-semibold text-neutral-200">
+            👁️ Show/Hide Explanation
+          </button>
+          <button type="button" id="focusShuffleBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-3.5 py-2.5 text-xs font-semibold text-neutral-200">
+            🔀 Shuffle Deck
+          </button>
+        </div>
+        <button type="button" id="focusNextBtn" class="rounded-xl bg-sky-500 hover:bg-sky-400 text-neutral-950 px-5 py-2.5 text-xs font-bold">
+          Next Question →
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 border-t border-white/10 py-8 px-4 sm:px-6 lg:px-8 mt-16">
+    <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500 font-mono">
+      <div class="flex items-center gap-2">
+        <i data-lucide="cpu" class="h-4 w-4 text-sky-400"></i>
+        <span>VECTR // SWE — DESIGN ENGINEERING EDITION</span>
+      </div>
+      <div>
+        NEXT.JS 14 APP ROUTER • TYPESCRIPT • TAILWIND GLASSMORPHISM • GSAP SCROLLTRIGGER
+      </div>
+    </div>
+  </footer>
+
+  <!-- APPLICATION SCRIPT -->
+  <script>
+    const CHOSEN_QUESTIONS = [{"id": 1, "ch": 4, "freq": 2, "q": "A structured document that setting out detailed descriptions of the system’s functions, services and operational constraints.", "opts": ["functional requirements", "user requirements", "non-functional requirements", "system requirements"], "ans": 3, "topic": "User vs System Requirements", "exp": "من أهم أسئلة الميدتيرم! أول ما تشوف كلمة **Structured document** و **Detailed descriptions** للوظائف والقيود (اللي بتبقى جزء من العقد بين العميل والشركة)، ده تعريف الـ **System Requirements** (بينما الـ User Requirements بتتكتب بلغة طبيعية و Diagrams بسيطة للـ Users).", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 1, "orig_id": 22}, {"id": 2, "ch": 3, "freq": 2, "q": "Scrum method has ...?", "opts": ["Three phases", "four phases", "one phases", "two phases"], "ans": 0, "topic": "Scrum Phases", "exp": "طريقة **Scrum** فيها **Three phases (٣ مراحل أساسية)**:\n1. **Outline planning phase**: بنحدد فيها الأهداف العامة للمشروع والـ Software architecture.\n2. **Sprint cycles**: سلسلة من الدورات اللي كل دورة فيها بتطلع Increment من السيستم.\n3. **Project closure phase**: قفل المشروع وتسليم الـ Documentation وتقييم الدروس المستفادة.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 2, "orig_id": 35}, {"id": 3, "ch": 4, "freq": 2, "q": "Observational technique that can be used to understand operational processes through observing and analyzing how people actually work?", "opts": ["Ethnography", "Interview", "Scenario", "none of the above"], "ans": 0, "topic": "Ethnography", "exp": "أول ما تشوف **Observational technique** أو **how people actually work** (ملاحظة الناس وهي بتشتغل فعلياً في بيئة العمل عشان نطلع الـ Social & Organizational requirements)، الإجابة فوراً هي **Ethnography**.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 3, "orig_id": 36}, {"id": 4, "ch": 3, "freq": 2, "q": "How is plan driven development different from agile development?", "opts": ["Outputs are decided through a process of negotiation during the software development process", "Specification, design, implementation and testing are interleaved", "Iteration occurs within activities", "All of the mentioned"], "ans": 2, "topic": "Plan-driven vs Agile", "exp": "في الـ **Plan-driven development**، الـ **Iteration occurs within activities** (التكرار بيحصل داخل كل مرحلة لوحدها). أما الاختيارين a و b فدول بيوصفوا الـ **Agile development** مش الـ Plan-driven!", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 4, "orig_id": 80}, {"id": 5, "ch": 3, "freq": 2, "q": "How many phases are there in Scrum?", "opts": ["Two", "Three", "Four", "Scrum is an agile method which means it does not have phases"], "ans": 1, "topic": "Scrum Phases", "exp": "في مرجع Sommerville، الـ **Scrum** بيتقسم لـ **Three phases (٣ مراحل عامة)**:\n1. **Outline planning phase**\n2. **Sprint cycles**\n3. **Project closure phase**.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 5, "orig_id": 81}, {"id": 6, "ch": 4, "freq": 2, "q": "Which one of the following is not a step of requirement engineering?", "opts": ["elicitation", "design", "analysis", "documentation"], "ans": 1, "topic": "Requirements Engineering Steps", "exp": "خطوات الـ **Requirements Engineering** الأساسية هي:\n- **Elicitation and analysis** (الاستنباط والتحليل)\n- **Specification / Documentation** (التوصيف والتوثيق)\n- **Validation** (التحقق)\nأما الـ **Design** فده نشاط منفصل بيجي بعد الـ Requirements Engineering.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 6, "orig_id": 94}, {"id": 7, "ch": 4, "freq": 2, "q": "There should be no conflicts or contradictions in the descriptions of the system facilities means ………", "opts": ["Complete", "Consistent", "Both a&b"], "ans": 1, "topic": "Completeness vs Consistency", "exp": "فرق جوهري في **Chapter 4** بين **Completeness** و **Consistency**:\n- **Consistent (متسق)**: مفيش أي تعارض أو تناقض (**No conflicts or contradictions**) في وصف وظائف النظام.\n- **Complete (كامل)**: بيشمل كل الوظائف والقيود اللي العميل طلبها (**All functions/services required by the user are defined**).", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 7, "orig_id": 156}, {"id": 8, "ch": 4, "freq": 2, "q": "Which is not a step of Requirements Engineering?", "opts": ["Requirements elicitation", "Requirements analysis", "Requirements design", "Requirements documentation"], "ans": 2, "topic": "Requirements Engineering Steps", "exp": "مراحل الـ **Requirements Engineering** هي Elicitation, Analysis, Documentation/Specification, و Validation؛ ومفيش خطوة اسمها **Requirements design**.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 98, "rank": 8, "orig_id": 172}, {"id": 9, "ch": 3, "freq": 1, "q": "Agility is defined as the ability of a project team to respond rapidly to a change.", "opts": ["True", "False"], "ans": 1, "topic": "Agility Definition", "exp": "⚠️ **تنبيه امتحانات مهم**: الـ **Agility** في المنهج أوسع من مجرد سرعة رد الفعل للتغيير؛ هي فلسفة متكاملة بتشمل تواصل الفريق، تسليم برمجيات شغالة بسرعة، دمج العميل في الفريق، وتنظيم العمل بحيث التغيير يكون جزء طبيعي من العملية، وعشان كده الإجابة المعتمدة في الامتحانات للسؤال ده هي **False**.", "is_hot": true, "is_quirk": true, "tier": 1, "score": 97, "rank": 9, "orig_id": 79}, {"id": 10, "ch": 3, "freq": 1, "q": "XP in agile method equivalent to ……..", "opts": ["Extreme programming", "Iterative programming", "Both a&b", "none"], "ans": 2, "topic": "Extreme Programming (XP)", "exp": "⚠️ **تنبيه امتحانات مهم**: اختصار **XP** حرفياً هو **Extreme Programming**، وبما إنه مبني بالكامل على التطوير التكراري (**Iterative programming**)، الإجابة المعتمدة للسؤال ده لما يجيلك بالاختيارات دي هي **`Both a&b`**.", "is_hot": true, "is_quirk": true, "tier": 1, "score": 97, "rank": 10, "orig_id": 155}, {"id": 11, "ch": 4, "freq": 1, "q": "Constraints on the services or functions offered by the system such as timing constraints, constraints on the development process, standards, etc", "opts": ["functional requirements", "user requirements", "system requirements", "non-functional requirements"], "ans": 3, "topic": "Functional vs Non-Functional Requirements", "exp": "سؤال جوهري للامتحان! أي **Constraints (قيود)** على خدمات السيستم زي الـ Timing constraints، الـ Development process، الـ Standards، الـ Performance، والـ Security بتصنف فوراً كـ **Non-functional Requirements**.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 96, "rank": 11, "orig_id": 21}, {"id": 12, "ch": 1, "freq": 1, "q": "Which of these is incorrect?", "opts": ["Software engineering belongs to Computer science", "Software engineering is a part of more general form of System Engineering", "Computer science belongs to Software engineering", "Software engineering is concerned with the practicalities of developing and delivering useful software"], "ans": 2, "topic": "Software Engineering vs Computer Science", "exp": "الجملة الغلط (**Incorrect**) هي إن **Computer science belongs to Software engineering**؛ لأن علوم الحاسب (Computer Science) بتركز على النظريات والأسس العلمية، بينما هندسة البرمجيات بتركز على الجوانب العملية لبناء وتسليم البرمجيات، وهي جزء من الـ System Engineering.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 96, "rank": 12, "orig_id": 63}, {"id": 13, "ch": 4, "freq": 1, "q": "Which one of the following is a requirement that fits in a developer’s module?", "opts": ["Availability", "Testability", "Usability", "Flexibility"], "ans": 1, "topic": "Non-Functional Quality Attributes", "exp": "من وجهة نظر الـ **Developer** وهو بيكتب الـ Module بتاعه، أهم خاصية بتفيده بشكل مباشر في الكود هي الـ **Testability** (قابلية الكود للاختبار بسهولة).", "is_hot": true, "is_quirk": false, "tier": 1, "score": 96, "rank": 13, "orig_id": 99}, {"id": 14, "ch": 3, "freq": 1, "q": "Extreme Programming (XP) is one of Agile Methods.", "opts": ["True", "False"], "ans": 0, "topic": "Extreme Programming (XP)", "exp": "صح (**True**)! الـ **Extreme Programming (XP)** والـ **Scrum** هما أشهر طريقتين من طرق الـ **Agile Methods** في المنهج.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 96, "rank": 14, "orig_id": 140}, {"id": 15, "ch": 4, "freq": 1, "q": "Functional Requirements focus on (Performance, efficiency, security, and technology) requirements.", "opts": ["True", "False"], "ans": 1, "topic": "Functional vs Non-Functional Requirements", "exp": "غلط (**False**)! الـ Performance والـ Efficiency والـ Security والـ Technology دي كلها **Non-Functional Requirements**، مش Functional Requirements.", "is_hot": true, "is_quirk": false, "tier": 1, "score": 96, "rank": 15, "orig_id": 141}, {"id": 16, "ch": 4, "freq": 1, "q": "Which one of the following is a functional requirement?", "opts": ["Maintainability", "Portability", "Robustness", "None of the mentioned"], "ans": 3, "topic": "Functional vs Non-Functional Requirements", "exp": "الـ Maintainability، الـ Portability، والـ Robustness كلهم **Non-functional requirements**؛ وبالتالي مفيش ولا واحدة فيهم Functional requirement (**None of the mentioned**).", "is_hot": true, "is_quirk": false, "tier": 1, "score": 96, "rank": 16, "orig_id": 171}, {"id": 17, "ch": 2, "freq": 3, "q": "A prototype can be used in ..?", "opts": ["non-functional requirements", "products that are well understood", "none of the above", "functional rather than non-functional requirements such as reliability and security"], "ans": 3, "topic": "Software Prototyping", "exp": "نقطة امتحانات أساسية: الـ **Prototype** بيركز على الـ **Functional requirements** (شكل الشاشات والوظائف) أكتر بكتير من الـ **Non-functional requirements** (زي الـ Reliability والـ Security والـ Performance) لأن الـ Prototype بيتبني بسرعة ومن غير تحسينات الأداء والأمان الكاملة.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 95, "rank": 17, "orig_id": 31}, {"id": 18, "ch": 3, "freq": 3, "q": "In agile method Individuals and interactions over processes and tools", "opts": ["true", "false"], "ans": 0, "topic": "Agile Manifesto", "exp": "صح (**True**)! دي أول ركيزة في الـ **Agile Manifesto**: **Individuals and interactions over processes and tools** (الأفراد وتفاعلاتهم أهم من العمليات والأدوات).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 95, "rank": 18, "orig_id": 53}, {"id": 19, "ch": 3, "freq": 3, "q": "Select the option that suits the manifesto for Agile Software Development?", "opts": ["following a plane over responding to change", "contract negotiation over customer collaboration", "Individuals & interactions over processes & tools", "comprehensive documentation over working software"], "ans": 2, "topic": "Agile Manifesto", "exp": "مهم جداً! الأربع قيم بتوع الـ **Agile Manifesto** هما:\n1. **Individuals and interactions** over processes and tools\n2. **Working software** over comprehensive documentation\n3. **Customer collaboration** over contract negotiation\n4. **Responding to change** over following a plan\nتلاحظ إن الاختيارات a, b, d عكسوا الجمل، والاختيار الوحيد الصح هو **c**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 95, "rank": 19, "orig_id": 56}, {"id": 20, "ch": 3, "freq": 3, "q": "Select the option that suits the Manifesto for Agile Software Development:", "opts": ["Individuals and interactions", "Working software", "Customer collaboration", "All of the mentioned"], "ans": 3, "topic": "Agile Manifesto", "exp": "كل دول من ركائز الـ **Agile Manifesto** (**All of the mentioned**): الأفراد وتفاعلاتهم (**Individuals and interactions**)، البرمجيات الشغالة (**Working software**)، والتعاون مع العميل (**Customer collaboration**)، بالإضافة للاستجابة للتغيير (**Responding to change**).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 95, "rank": 20, "orig_id": 78}, {"id": 21, "ch": 2, "freq": 3, "q": "Prototype focus on functional rather than non-functional requirements.", "opts": ["True", "False"], "ans": 0, "topic": "Software Prototyping", "exp": "صح (**True**)! الـ **Prototype** بيركز على الـ **Functional requirements** (الوظائف وتفاعل اليوزر) أكتر من الـ **Non-functional requirements** (زي الأداء والأمان).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 95, "rank": 21, "orig_id": 128}, {"id": 22, "ch": 3, "freq": 3, "q": "(Agile methods) focus on (processes and tools) over (Peoples and interactions)", "opts": ["True", "False (vice versa)"], "ans": 1, "topic": "Agile Manifesto", "exp": "غلط (**False - Vice versa**)! الـ **Agile methods** بتركز على **People / Individuals and interactions** فوق الـ Processes and tools (العكس هو الصحيح).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 95, "rank": 22, "orig_id": 131}, {"id": 23, "ch": 2, "freq": 3, "q": "Prototype focus on functional rather than non-functional requirements.", "opts": ["True", "False"], "ans": 0, "topic": "Software Prototyping", "exp": "صح (**True**)! الـ **Prototype** بيركز على استكشاف وتجربة الـ **Functional requirements** مش الـ Non-functional requirements.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 95, "rank": 23, "orig_id": 144}, {"id": 24, "ch": 3, "freq": 2, "q": "The first step in Scrum is for the Product Owner to articulate the product vision. Eventually, this evolves into a refined and prioritized list of features called the ..........", "opts": ["Sprint Backlog", "Whiteboard", "Product Backlog", "Potentially Shippable Product"], "ans": 2, "topic": "Scrum Artifacts", "exp": "أول خطوة في **Scrum** إن الـ **Product Owner** بيحول رؤية المنتج لقايمة مترتبة حسب الأولوية (**Prioritized list of features / to-do items**) اسمها الـ **Product Backlog**. أما الـ **Sprint Backlog** فده الجزء اللي الفريق بيختاره عشان ينفذه في Sprint واحدة بس.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 24, "orig_id": 2}, {"id": 25, "ch": 2, "freq": 2, "q": "In the _____ development process, the various phases of development are completed sequentially; one after the other.", "opts": ["iterative", "waterfall", "agile", "spiral"], "ans": 1, "topic": "Waterfall Model", "exp": "الـ **Waterfall Model** (النموذج الشلالي) هو النموذج اللي المراحل فيه بتمشي **Sequentially** ورا بعضها (Specification → Design → Implementation → Testing → Maintenance)، ومينفعش مرحلة تبدأ غير لما اللي قبلها تخلص.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 25, "orig_id": 4}, {"id": 26, "ch": 3, "freq": 2, "q": "What is pair programming?", "opts": ["Two people share one workstation, typically taking turns typing while the other pays attention and helps", "Code is written two lines at a time to reduce errors", "One person checks in code so another person can review it later", "The pairs of developers work on all areas of the system, so that no islands of expertise develop and all the developers take responsibility for all of the code"], "ans": 0, "topic": "Pair Programming (XP)", "exp": "الـ **Pair Programming** في الـ XP معناه إن اتنين مبرمجين بيقعدوا مع بعض على نفس الـ Workstation؛ واحد بيكتب الكود (Driver) والتاني بيراجع وراه ويفكر في الصورة الكبيرة (Navigator) وبيبدلوا الأدوار سوا. الاختيار الأخير (d) بيشرح فائدة الـ Collective Ownership وتغيير الأزواج مش تعريف الـ Pair Programming الأساسي.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 26, "orig_id": 5}, {"id": 27, "ch": 3, "freq": 2, "q": "Which of the following is the Scrum Master responsible for?", "opts": ["Prioritize product backlog for development", "Arranges daily meetings", "Organize team to develop the software.", "Continuously review the product backlog to ensure that the project continues to meet critical business needs"], "ans": 1, "topic": "Scrum Roles", "exp": "الـ **Scrum Master** هو المسؤول عن تنظيم الاجتماعات اليومية (**Arranges daily meetings / Daily Scrum**) وحماية الفريق من أي معوقات خارجية. ركز في الفخاخ:\n- ترتيب ومراجعة الـ Product Backlog (اختيار a و d) دي وظيفة الـ **Product Owner**.\n- تنظيم المبرمجين لنفسهم (اختيار c) دي مسؤولية الـ **Team** نفسه (Self-organizing).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 27, "orig_id": 7}, {"id": 28, "ch": 4, "freq": 2, "q": "A Use-case actor is always:", "opts": ["person", "system", "person or system"], "ans": 2, "topic": "Use Cases & Actors", "exp": "الـ **Actor** في الـ **Use-case** ممكن يكون **Person (إنسان/مستخدم)** أو **Other System (نظام تاني بيتفاعل مع السيستم بتاعنا)**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 28, "orig_id": 13}, {"id": 29, "ch": 2, "freq": 2, "q": "Which phase of the RUP is used to establish a business case for the system?", "opts": ["Transition", "Elaboration", "Construction", "Inception"], "ans": 3, "topic": "Rational Unified Process (RUP)", "exp": "مراحل الـ **RUP (Rational Unified Process)** الأربعة بالترتيب:\n1. **Inception**: بنحدد فيها الـ **Business Case** للسيستم والـ Scope والجدوى.\n2. **Elaboration**: بنفهم المشكلة ونعمل الـ Architecture الأساسي.\n3. **Construction**: بنعمل الـ Design والـ Programming والـ Testing.\n4. **Transition**: بننقل السيستم للـ Users في بيئة العمل الحقيقية.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 29, "orig_id": 17}, {"id": 30, "ch": 2, "freq": 2, "q": "In which model Specification, development and validation are interleaved?", "opts": ["Incremental development Model", "Waterfall Model", "Reuse-oriented Model", "None of the above"], "ans": 0, "topic": "Incremental Development", "exp": "في الـ **Incremental Development Model** (وكذلك الـ Agile)، المراحل التلاتة (**Specification, Development, and Validation**) بتكون **Interleaved** يعني متداخلة مع بعضها ومبنستناش مرحلة تخلص ١٠٠٪ عشان نبدأ التانية زي الـ Waterfall.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 30, "orig_id": 25}, {"id": 31, "ch": 2, "freq": 2, "q": "A dynamic perspective in Rational unified process show ...?", "opts": ["phases over time", "process activities", "good practice", "All of the above"], "ans": 0, "topic": "RUP Perspectives", "exp": "الـ **RUP** بيتوصف من ٣ منظورات (**Three Perspectives**) مهمة جداً للامتحان:\n1. **Dynamic perspective**: بيعرض المراحل بمرور الوقت (**Phases over time**: Inception, Elaboration, Construction, Transition).\n2. **Static perspective**: بيعرض الأنشطة (**Process activities enacted**).\n3. **Practice perspective**: بيقترح أفضل الممارسات (**Good practices**).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 31, "orig_id": 28}, {"id": 32, "ch": 3, "freq": 2, "q": "Plan-driven development is different than Agile development in?", "opts": ["Iteration occurs across activities", "Iteration occurs within activities", "code more than design", "customer involvement"], "ans": 1, "topic": "Plan-driven vs Agile", "exp": "الفرق الجوهري بين **Plan-driven vs Agile**:\n- في الـ **Plan-driven development**: المراحل منفصلة والـ **Iteration occurs within activities** (التكرار بيحصل جوه كل نشاط لوحده).\n- في الـ **Agile development**: الـ **Iteration occurs across activities** (المتطلبات والتصميم والتنفيذ متداخلين مع بعض).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 32, "orig_id": 32}, {"id": 33, "ch": 3, "freq": 2, "q": "In XP (Extreme Programming) Increments are delivered to customers every………", "opts": ["2 weeks", "3weeks", "4weeks", "Non"], "ans": 0, "topic": "XP Release Cycle", "exp": "في الـ **Extreme Programming (XP)**، الـ Increments بتتسلم للـ Customers كل **أسبوعين (Every 2 weeks)**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 33, "orig_id": 40}, {"id": 34, "ch": 2, "freq": 2, "q": "Is a model a phase has to be complete before moving onto the next", "opts": ["waterfall model", "incremental model", "R_use model", "V_model"], "ans": 0, "topic": "Waterfall Model", "exp": "في الـ **Waterfall Model** لازم كل مرحلة تخلص بالكامل (**Complete before moving onto the next**) قبل الانتقال للمرحلة اللي بعدها.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 34, "orig_id": 42}, {"id": 35, "ch": 3, "freq": 2, "q": "Is a person who arranges daily meetings", "opts": ["scrum master", "team", "customer", "product owner"], "ans": 0, "topic": "Scrum Master", "exp": "الشخص المسؤول عن تنظيم الاجتماعات اليومية (**Arranges daily meetings / Daily Scrum**) وتسهيل شغل الفريق هو الـ **Scrum Master**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 35, "orig_id": 43}, {"id": 36, "ch": 2, "freq": 2, "q": "In RUP (Rational Unified Process) a …… perspective that shows phases over time", "opts": ["Dynamic", "Static", "Practice", "Non"], "ans": 0, "topic": "RUP Perspectives", "exp": "المنظور اللي بيوضح المراحل بمرور الوقت (**Phases over time**: Inception, Elaboration, Construction, Transition) في الـ RUP هو الـ **Dynamic perspective**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 36, "orig_id": 44}, {"id": 37, "ch": 2, "freq": 2, "q": "In software process activities not include …….", "opts": ["Verification", "Validation", "Evolution", "Design"], "ans": 0, "topic": "Software Process Activities", "exp": "خد بالك من التلاعب اللفظي هنا! الأنشطة الأربعة الأساسية للـ **Software Process** في مرجع Sommerville اسمها الرسمي:\n1. **Specification**\n2. **Design and Implementation**\n3. **Software Validation** (اللي جواها V&V)\n4. **Software Evolution**\nعشان كده الكلمة اللي مش مكتوبة كعنوان نشاط أساسي من الأربعة هي **Verification**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 37, "orig_id": 45}, {"id": 38, "ch": 1, "freq": 2, "q": "Customized products should do is owned by ………", "opts": ["Customer", "Developer", "Manager", "Non"], "ans": 0, "topic": "Generic vs Customized Products", "exp": "مقارنة جوهرية في **Chapter 1**:\n- في الـ **Customized (Bespoke) products**: الـ Specification (تحديد البرنامج هيعمل إيه) بيملكه ويتحكم فيه الـ **Customer (العميل)**.\n- أما في الـ **Generic products**: الـ Specification بيملكه ويتحكم فيه الـ **Developer (الشركة المطورة)**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 38, "orig_id": 48}, {"id": 39, "ch": 3, "freq": 2, "q": "The first step in Scrum is for the Product Owner to articulate the product vision. Eventually, this evolves into a refined and prioritized list of features called the .........", "opts": ["Product Backlog", "Sprint Backlog", "Whiteboard", "Potentially Shippable Product"], "ans": 0, "topic": "Scrum Artifacts", "exp": "أول خطوة في **Scrum** إن الـ **Product Owner** بيصيغ رؤية المنتج اللي بتتطور لقايمة مترتبة حسب الأولوية (**Prioritized list of features**) اسمها الـ **Product Backlog**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 39, "orig_id": 54}, {"id": 40, "ch": 4, "freq": 2, "q": "A structured document that setting out detailed descriptions of the system’s functions, services and operational constraints.", "opts": ["system requirements", "non-functional requirements", "user requirements", "functional requirements"], "ans": 0, "topic": "User vs System Requirements", "exp": "وثيقة مهيكلة (**Structured document**) بتعرض وصف تفصيلي لوظائف السيستم وخدماته والقيود التشغيلية عليه — ده التعريف الرسمي للـ **System requirements**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 40, "orig_id": 55}, {"id": 41, "ch": 2, "freq": 2, "q": "In incremental development the four basic process activities are?", "opts": ["square", "interleaved", "spiral", "sperate & distinct"], "ans": 1, "topic": "Incremental Development", "exp": "في الـ **Incremental development**، الأنشطة الأساسية الأربعة بتكون **Interleaved** (متداخلة مع بعضها)، بعكس الـ Waterfall / Plan-driven اللي بتكون فيها **Separate and distinct** (منفصلة).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 41, "orig_id": 57}, {"id": 42, "ch": 2, "freq": 2, "q": "Which phase of the RUP is used to establish a business case for the system?", "opts": ["Transition", "Elaboration", "Construction", "Inception"], "ans": 3, "topic": "RUP Phases", "exp": "مرحلة الـ **Inception** في الـ **RUP (Rational Unified Process)** هي المرحلة الأولى اللي بنأسس فيها الـ **Business Case** للسيستم ونحدد جدوى المشروع.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 42, "orig_id": 75}, {"id": 43, "ch": 2, "freq": 2, "q": "Which one of the following is not a fundamental activity for software processes in software engineering?", "opts": ["Software Verification", "Software Validation", "Software design and implementation", "Software evolution"], "ans": 0, "topic": "Software Process Activities", "exp": "الأنشطة الأربعة الأساسية للـ **Software Process** هي Specification, **Software design and implementation**, **Software Validation**, و **Software evolution**؛ وبالتالي **Software Verification** لوحدها مش اسم واحد من الأنشطة الأربعة الرئيسية.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 43, "orig_id": 76}, {"id": 44, "ch": 3, "freq": 2, "q": "In XP Increments are delivered to customers every _______ weeks.", "opts": ["One", "Two", "Three", "Four"], "ans": 1, "topic": "XP Release Cycle", "exp": "في الـ **Extreme Programming (XP)**، الـ Increments بتتسلم للعميل كل **أسبوعين (Two weeks)** بشكل منتظم وسريع.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 44, "orig_id": 86}, {"id": 45, "ch": 4, "freq": 2, "q": "A Use-case actor is always a person having a role that different people may play.", "opts": ["True", "False"], "ans": 1, "topic": "Use Cases & Actors", "exp": "غلط (**False**)! الـ **Use-case actor** مش دايماً إنسان (**Person**)؛ ممكن يكون **Another system** أو جهاز خارجي بيتفاعل مع السيستم بتاعنا.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 45, "orig_id": 95}, {"id": 46, "ch": 3, "freq": 2, "q": "………….. Developers work in pairs, checking each other’s work and providing the support to always do a good job", "opts": ["Testing", "validation", "verification", "pair programming"], "ans": 3, "topic": "Pair Programming (XP)", "exp": "التعريف المباشر للـ **Pair programming** في الـ XP: المبرمجين بيشتغلوا في أزواج (**Work in pairs**)، بيراجعوا شغل بعض ويدعموا بعض عشان يطلعوا كود بجودة عالية ويشاركوا المعرفة بالسيستم.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 46, "orig_id": 126}, {"id": 47, "ch": 4, "freq": 2, "q": "Which of the following are good for getting requirements that are derived from the way that people actually work?", "opts": ["Interviews", "Ethnography", "Test-cases", "Use cases"], "ans": 1, "topic": "Ethnography", "exp": "أول ما تشوف **derived from the way that people actually work** (متطلبات مستنبطة من الطريقة الفعلية اللي الناس بتشتغل بيها في الواقع)، الإجابة هي **Ethnography**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 47, "orig_id": 168}, {"id": 48, "ch": 1, "freq": 2, "q": "In customized products the specification of what the software should do is owned by the software developer.", "opts": ["True", "False"], "ans": 1, "topic": "Generic vs Customized Products", "exp": "غلط (**False**)! في الـ **Customized products**، توصيف البرنامج (**Specification of what the software should do**) بيملكه الـ **Customer (العميل)**، بينما في الـ **Generic products** بيملكه الـ **Developer**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 48, "orig_id": 185}, {"id": 49, "ch": 4, "freq": 2, "q": "The SRS is said to be consistent if and only if:", "opts": ["its structure and style are such that any changes to the requirements can be made easily while retaining the style and structure", "every requirement stated therein is one that the software shall meet", "every requirement stated therein is verifiable", "no subset of individual requirements described in it conflict with each other"], "ans": 3, "topic": "SRS Consistency", "exp": "وثيقة الـ **SRS** بتكون **Consistent (متسقة)** لو مفيش أي مجموعة من المتطلبات جواها بتتعارض أو تتناقض مع بعضها (**No subset of individual requirements conflict with each other**).\n- الاختيار a ده تعريف الـ **Modifiable**.\n- الاختيار b ده تعريف الـ **Correct**.\n- الاختيار c ده تعريف الـ **Verifiable**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 94, "rank": 49, "orig_id": 190}, {"id": 50, "ch": 1, "freq": 1, "q": "What is a Software?", "opts": ["Software is set of programs", "Software is documentation and configuration of data", "Software is set of programs, documentation & configuration of data", "Software is an engineering discipline that is concerned with all aspects of software production."], "ans": 2, "topic": "Software Definition", "exp": "سؤال كلاسيكي في **Chapter 1**: الـ **Software** مش مجرد كود أو Programs بس! الـ Software هو: **Computer programs + Associated documentation + Configuration data** اللي البرنامج بيحتاجها عشان يشتغل صح. (ملحوظة: الاختيار d ده تعريف **Software Engineering** مش تعريف الـ Software).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 50, "orig_id": 9}, {"id": 51, "ch": 4, "freq": 1, "q": "Requirements validation techniques are:", "opts": ["reviews, prototyping, test case generation", "interview, ethnography, test cases", "interview, prototyping, scenarios", "interview, use cases, prototyping"], "ans": 0, "topic": "Requirements Validation", "exp": "فرق مهم جداً في **Chapter 4** بين تقنيات الـ **Validation** وتقنيات الـ **Elicitation**:\n- **Requirements Validation Techniques** (التأكد من صحة المتطلبات): **Requirements Reviews**, **Prototyping**, **Test-case generation**.\n- أما الـ **Interviewing**, **Ethnography**, **Scenarios / Use cases** فدي تقنيات **Elicitation** (جمع واكتشاف المتطلبات).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 51, "orig_id": 11}, {"id": 52, "ch": 4, "freq": 1, "q": "The process of establishing the services that the customer requires from a system and the constraints under which it operates and is developed.", "opts": ["requirements elicitation", "requirements engineering", "requirements", "requirements management"], "ans": 1, "topic": "Requirements Engineering Definition", "exp": "ده التعريف الرسمي لعملية الـ **Requirements Engineering (RE)** في بداية **Chapter 4**: هي العملية الكاملة لتحديد الـ **Services** اللي العميل محتاجها والـ **Constraints** اللي السيستم هيشتغل ويتطور تحتها.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 52, "orig_id": 14}, {"id": 53, "ch": 4, "freq": 1, "q": "Requirements elicitation techniques are:", "opts": ["reviews, prototyping, test case generation", "interview, ethnography, scenarios", "interview, prototyping, test case generation", "reviews, use cases, prototyping"], "ans": 1, "topic": "Requirements Elicitation Techniques", "exp": "عكس سؤال 11 بالظبط! تقنيات الـ **Requirements Elicitation** (استنباط وجمع المتطلبات من الـ Stakeholders) هي: **Interviews (المقابلات)**، **Ethnography (الملاحظة الميدانية)**، و **Scenarios / User Stories**. (أما الـ Reviews والـ Test-case generation فدول Validation).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 53, "orig_id": 16}, {"id": 54, "ch": 3, "freq": 1, "q": "User requirements are expressed as __________ in Extreme Programming.", "opts": ["implementation tasks", "functionalities", "scenarios", "none of the mentioned"], "ans": 2, "topic": "User Stories / Scenarios (XP)", "exp": "في الـ **Extreme Programming (XP)**، متطلبات المستخدم (**User requirements**) بيتعبر عنها في صورة **Scenarios** أو **User Stories** بتتكتب على كروت (**Story cards**)، وبعدين المبرمجين بيقسموها لـ Implementation tasks.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 54, "orig_id": 87}, {"id": 55, "ch": 3, "freq": 1, "q": "In XP an automated unit test framework is used to write tests for a new piece of functionality before that functionality itself is implemented.", "opts": ["True", "False"], "ans": 0, "topic": "Test-First Development (TDD)", "exp": "صح (**True**)! ده تعريف الـ **Test-first development (TDD)** في الـ XP: بنكتب الـ Automated unit test للـ Functionality الجديدة **قبل (Before)** ما نكتب كود الـ Functionality نفسها.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 55, "orig_id": 91}, {"id": 56, "ch": 4, "freq": 1, "q": "The user system requirements are the parts of which document?", "opts": ["SDD", "SRS (Software Requirements Specification)", "DDD", "SRD"], "ans": 1, "topic": "SRS Document", "exp": "الـ **User requirements** والـ **System requirements** مع بعض بيكونوا وثيقة متطلبات البرمجيات الرسمية اللي اسمها **SRS (Software Requirements Specification)**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 56, "orig_id": 96}, {"id": 57, "ch": 2, "freq": 1, "q": "…………… is very suitable when requirements are Very Understood at the Beginning of the project.", "opts": ["Waterfall Model", "Incremental model", "Spiral Model", "Reused Model"], "ans": 0, "topic": "Waterfall Model Usage", "exp": "إمتى نستخدم الـ **Waterfall Model**؟ لما تكون الـ **Requirements are very well-understood at the beginning** (المتطلبات مفهومة وواضحة جداً من بداية المشروع ومش متوقع تتغير كتير).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 57, "orig_id": 117}, {"id": 58, "ch": 2, "freq": 1, "q": "When the system is developed at several sites we apply …………..", "opts": ["Waterfall Model", "Incremental model", "Spiral Model", "Reused Model"], "ans": 0, "topic": "Waterfall Model Usage", "exp": "نقطة مهمة في **Chapter 2**: لما يكون السيستم كبير وبيتطور في **عدة مواقع جغرافية مختلفة (Developed at several sites)**، بنطبق الـ **Waterfall Model** (أو الـ Plan-driven) لأن الوثائق الرسمية والتخطيط المسبق بيسهلوا التنسيق بين الفرق البعيدة عن بعضها.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 58, "orig_id": 118}, {"id": 59, "ch": 3, "freq": 1, "q": "………… are processes where all of the process activities are planned in advance.", "opts": ["Agile processes", "plan-driven processes", "Spiral processes", "Reused processes"], "ans": 1, "topic": "Plan-driven vs Agile", "exp": "التعريف المباشر للـ **Plan-driven processes** في **Chapter 3**: هي العمليات اللي بيتم فيها التخطيط لكل أنشطة المشروع مسبقاً (**All of the process activities are planned in advance**)، وبنقيس التقدم مقارنة بالخطة دي.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 59, "orig_id": 122}, {"id": 60, "ch": 3, "freq": 1, "q": "In ………………. Planning is incremental and it is easier to change the processes to meet changing customer requirements", "opts": ["Agile processes", "plan-driven processes", "Spiral processes"], "ans": 0, "topic": "Plan-driven vs Agile", "exp": "عكس سؤال 122: في الـ **Agile processes**، التخطيط بيكون تدريجي (**Planning is incremental**) وبيكون أسهل بكتير نغير العملية عشان نواكب متطلبات العميل المتغيرة.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 60, "orig_id": 123}, {"id": 61, "ch": 2, "freq": 1, "q": "…………………. Separate and distinct phases of specification and development.", "opts": ["plan-driven Model", "Incremental Model", "Spiral Model", "Reused Model"], "ans": 0, "topic": "Plan-driven / Waterfall Model", "exp": "الـ **Plan-driven Model (Waterfall)** بيتميز بوجود مراحل منفصلة ومستقلة (**Separate and distinct phases**) للتوصيف والتطوير، بعكس الـ Incremental اللي المراحل فيه بتكون **Interleaved**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 61, "orig_id": 124}, {"id": 62, "ch": 3, "freq": 1, "q": "(Agile Methods) focus on (Customer collaboration) over (contract negotiation العقود).", "opts": ["True", "False"], "ans": 0, "topic": "Agile Manifesto", "exp": "صح (**True**)! دي القيمة التالتة في الـ **Agile Manifesto**: **Customer collaboration over contract negotiation** (التعاون المستمر مع العميل أهم من التفاوض على بنود العقود).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 62, "orig_id": 137}, {"id": 63, "ch": 1, "freq": 1, "q": "Web applications such as e-commerce applications is example of …….", "opts": ["Standalone software", "Batch processing software", "Interactive transaction-based applications", "Entertainment software"], "ans": 2, "topic": "Application Types", "exp": "من أمثلة أنواع التطبيقات في **Chapter 1**: تطبيقات الويب والتجارة الإلكترونية (**E-commerce web applications**) هي مثال صريح على الـ **Interactive transaction-based applications** (تطبيقات بتشتغل على سيرفرات بعيدة واليوزر بيتفاعل معاها من جهازه).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 63, "orig_id": 145}, {"id": 64, "ch": 1, "freq": 1, "q": "Software should not make wasteful use of system resources such as memory and processor cycles this refers to ………..", "opts": ["Maintainability", "Efficiency", "Acceptability", "Dependability"], "ans": 1, "topic": "Attributes of Good Software", "exp": "أربع خصائص أساسية للـ **Good Software** في **Chapter 1** لازم تحفظ تعريف كل واحدة:\n1. **Maintainability**: قابلية التعديل لمواكبة متطلبات العميل المتغيرة.\n2. **Dependability & Security**: الموثوقية والأمان وعدم التسبب في ضرر عند العطل.\n3. **Efficiency**: عدم إهدار موارد النظام زي الـ **Memory** والـ **Processor cycles**.\n4. **Acceptability**: مقبول ومفهوم وسهل الاستخدام للـ Users.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 64, "orig_id": 146}, {"id": 65, "ch": 1, "freq": 1, "q": "Roughly 60% of software costs are ………….. costs", "opts": ["Development", "testing"], "ans": 0, "topic": "Software Engineering Costs", "exp": "رقم نصي مباشر من **Chapter 1** في السلايدز: حوالي **60%** من تكاليف البرمجيات هي **Development costs**، وحوالي **40%** هي **Testing costs** (وبالنسبة للبرمجيات المخصصة Custom software، تكاليف الـ Evolution بتفوق تكاليف التطوير).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 65, "orig_id": 148}, {"id": 66, "ch": 4, "freq": 1, "q": "What do the system stakeholders require or expect from the system means …………", "opts": ["Requirements validation", "Requirements specification", "Feasibility study", "Requirements elicitation and analysis"], "ans": 3, "topic": "Requirements Engineering Steps", "exp": "سؤال مهم في **Chapter 4** عن أنشطة الـ RE:\n- **Feasibility study**: هل السيستم مفيد للبيزنس وممكن تنفيذه؟\n- **Requirements elicitation and analysis**: الـ Stakeholders محتاجين أو متوقعين إيه من السيستم؟ (**What do the system stakeholders require or expect from the system?**)\n- **Requirements specification**: كتابة وتوصيف المتطلبات بالتفصيل.\n- **Requirements validation**: التأكد من صحة المتطلبات.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 66, "orig_id": 150}, {"id": 67, "ch": 4, "freq": 1, "q": "……………. define system properties and constraints", "opts": ["Non-Functional Requirement", "Functional Requirement", "Domain Requirement", "none"], "ans": 0, "topic": "Non-Functional Requirements", "exp": "المتطلبات اللي بتحدد خصائص السيستم والقيود عليه (**System properties and constraints** زي الـ Reliability، الـ Response time، والـ Storage) هي الـ **Non-Functional Requirements**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 67, "orig_id": 158}, {"id": 68, "ch": 4, "freq": 1, "q": "Are the requirements that are directly concerned with the specific system services", "opts": ["Non-Functional Requirement", "Functional Requirement", "Domain Requirement", "none"], "ans": 1, "topic": "Functional Requirements", "exp": "المتطلبات اللي بتهتم بشكل مباشر بالخدمات والوظائف المحددة اللي السيستم بيقدمها (**Directly concerned with specific system services**) هي الـ **Functional Requirements**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 68, "orig_id": 159}, {"id": 69, "ch": 2, "freq": 1, "q": "Throw-away Prototypes should be discarded after development as they are not a good basis for a production system", "opts": ["True", "False"], "ans": 0, "topic": "Throw-away Prototypes", "exp": "صح (**True**)! سؤال مهم جداً في **Chapter 2**: ليه الـ **Throw-away prototypes** لازم تترمي (**Should be discarded**) بعد ما نطلع منها المتطلبات ومينفعش نستخدمها كـ Production system؟\n1. لأنها مبنية بسرعة فمستحيل نظبطها تحقق الـ Non-functional requirements (زي الأداء والأمان).\n2. لأنها **Undocumented**.\n3. لأن التعديلات السريعة بتبوظ الـ **Software structure** فصيانتها هتبقى مكلفة جداً.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 69, "orig_id": 162}, {"id": 70, "ch": 2, "freq": 1, "q": "…………… The process of converting the system specification into an executable system.", "opts": ["Testing", "evolution", "analysis", "design and implementation"], "ans": 3, "topic": "Software Design & Implementation", "exp": "التعريف الرسمي لنشاط الـ **Software Design and Implementation** في **Chapter 2**: هو عملية تحويل توصيف النظام (**System specification**) إلى نظام قابل للتنفيذ (**Executable system**).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 70, "orig_id": 166}, {"id": 71, "ch": 2, "freq": 1, "q": "What are 3 benefits to using the Incremental development?", "opts": ["The process is visible, suitable for large systems, The cost of accommodating changing customer requirements is increased", "More rapid delivery, It is easier to get customer feedback, The amount of analysis and documentation that has to be redone is much less than is required with the waterfall model", "More rapid delivery, It is easier to get customer feedback, The amount of analysis and documentation that has to be redone is much greater than is required with the waterfall model", "The process is visible, suitable for small systems, The cost of accommodating changing customer requirements is decreased"], "ans": 1, "topic": "Incremental Development Benefits", "exp": "التلات مميزات الرسمية للـ **Incremental Development** في **Chapter 2** (مهمين جداً):\n1. **Cost of accommodating changing customer requirements is reduced** (كمية التحليل والتوثيق اللي بنحتاج نعيدها أقل بكتير من الـ Waterfall).\n2. **Easier to get customer feedback** على الشغل اللي اتعمل.\n3. **More rapid delivery and deployment** لسوفتوير مفيد للعميل.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 71, "orig_id": 170}, {"id": 72, "ch": 4, "freq": 1, "q": "The SRS is said to be consistent if and only if all functions required by the customer included", "opts": ["True", "False"], "ans": 1, "topic": "Completeness vs Consistency", "exp": "غلط (**False**)! فخ ممتاز للامتحان: وجود كل الوظائف اللي طلبها العميل (**All functions required by the customer are included**) ده تعريف الـ **Completeness (الكامل)** مش الـ **Consistency (الاتساق وعدم التضارب)**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 72, "orig_id": 177}, {"id": 73, "ch": 4, "freq": 1, "q": "Requirement evolution concerned with demonstrating that the requirements define the system that the customer really wants.", "opts": ["True", "False"], "ans": 1, "topic": "Requirements Validation", "exp": "غلط (**False**)! الفخ هنا في كلمة **Evolution**؛ اللي بيهتم بإثبات إن المتطلبات بتعرف السيستم اللي العميل عاوزه فعلاً (**Demonstrating that the requirements define the system that the customer really wants**) هو **Requirements Validation** مش Evolution.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 73, "orig_id": 182}, {"id": 74, "ch": 4, "freq": 1, "q": "Which one of the following considered as metrics for specifying software Speed?", "opts": ["user/event response time", "Mean time to failure", "Mbytes", "Number of ROM chips"], "ans": 0, "topic": "Metrics for Non-Functional Requirements", "exp": "من جدول الـ **Metrics for specifying non-functional requirements** المهم جداً في **Chapter 4**:\n- **Speed (السرعة)**: بتتقاس بـ **User/event response time** أو Processed transactions/second.\n- **Size (الحجم)**: بيتقاس بـ **Mbytes** أو **Number of ROM chips**.\n- **Reliability (الاعتمادية)**: بتتقاس بـ **Mean time to failure (MTTF)** أو Rate of occurrence of failure (ROCOF).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 74, "orig_id": 192}, {"id": 75, "ch": 2, "freq": 1, "q": ".......... strategy assumes that the process is designed so that changes can be accommodated at relatively low cost.", "opts": ["Change anticipation", "Change tolerance", "software testing", "validation"], "ans": 1, "topic": "Coping with Change (Anticipation vs Tolerance)", "exp": "مقارنة مهمة جداً في **Chapter 2** في موضوع التعامل مع التغيير (**Coping with change**):\n1. **Change anticipation (توقع التغيير)**: بنحاول نتوقع التغييرات قبل ما تحصل (ومثاله الـ **System prototyping**).\n2. **Change tolerance (تحمل التغيير)**: بنصمم الـ Process نفسها بحيث تستوعب التغييرات بتكلفة قليلة (**Changes can be accommodated at relatively low cost**)، ومثاله الـ **Incremental delivery**.", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 75, "orig_id": 196}, {"id": 76, "ch": 2, "freq": 1, "q": "The RUP is normally described from three perspectives-dynamic, static & practice. What does static perspective do?", "opts": ["It shows the process activities that are enacted", "It suggests good practices to be used during the process", "It shows the phases of the model over time", "It shows the tasks of the model over time"], "ans": 0, "topic": "RUP Perspectives", "exp": "ختام مسك ومكمل لسؤال 28 وس44 عن منظورات الـ **RUP** التلاتة:\n- **Static perspective**: بيوضح الأنشطة اللي بيتم تنفيذها (**Shows the process activities that are enacted** زي الـ Requirements, Analysis & Design, Implementation, Test).\n- **Dynamic perspective**: بيوضح المراحل بمرور الوقت (**Shows the phases over time**).\n- **Practice perspective**: بيقترح أفضل الممارسات (**Suggests good practices**).", "is_hot": false, "is_quirk": false, "tier": 1, "score": 92, "rank": 76, "orig_id": 197}, {"id": 77, "ch": 3, "freq": 1, "q": "Pair programming may cause duplicate codes.", "opts": ["True", "False"], "ans": 0, "topic": "Pair Programming Note", "exp": "⚠️ **تنبيه امتحانات مهم**: علمياً الـ Pair Programming والـ Refactoring بيقللوا تكرار الكود، لكن **الإجابة المعتمدة في نموذج تصحيح الامتحان للسؤال ده هي `True`**! لو جالك السؤال ده بالنص في الامتحان، اختار **True**.", "is_hot": false, "is_quirk": true, "tier": 2, "score": 86, "rank": 77, "orig_id": 142}, {"id": 78, "ch": 3, "freq": 1, "q": "What is code refactoring?", "opts": ["Improving both internal structure and functional behavior", "Improving internal structure only, e.g. removing duplicate code", "Improving functional behavior only, e.g. fixing bugs", "Improving ownership of code and spreads knowledge across the team"], "ans": 1, "topic": "Refactoring (XP)", "exp": "الـ **Refactoring** في الـ Extreme Programming (XP) معناه إننا بنحسن الـ **Internal Structure** بتاع الكود (زي إننا نشيل الـ Duplicate Code، نرتب الـ Classes، ونخلي الكود أسهل في الفهم والـ Maintainability) من غير ما نغير الـ **External / Functional Behavior** خالص! لو غيرت الـ Behavior أو صلحت Bugs فده اسمه Bug Fixing مش Refactoring.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 78, "orig_id": 1}, {"id": 79, "ch": 2, "freq": 1, "q": "What do you understand by V&V in software testing?", "opts": ["Verified Version", "Version Validation", "Verification and Validation", "Version Verification"], "ans": 2, "topic": "Software Validation (V&V)", "exp": "اختصار **V&V** في هندسة البرمجيات هو **Verification and Validation** (المرحلة التالتة من أنشطة الـ Software Process).\n- **Verification**: Are we building the product right? (مكتوب صح ومطابق للـ Specification؟)\n- **Validation**: Are we building the right product? (بيعمل اللي الـ Customer عاوزه فعلاً؟)", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 79, "orig_id": 3}, {"id": 80, "ch": 3, "freq": 1, "q": "How is Product Backlog Arranged?", "opts": ["Items are randomly arranged", "Into categories, P1, P2, P3 etc", "Large items at the top, small items at the bottom", "Most important items at the top, least important items at the bottom"], "ans": 3, "topic": "Scrum Product Backlog", "exp": "الـ **Product Backlog** دايماً بيترتب حسب الـ **Priority (الأهمية للعميل والبيزنس)**؛ أهم الـ Features بتكون فوق خالص (**Most important items at the top**) عشان تتنفذ في أول Sprints، والأقل أهمية بتكون تحت.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 80, "orig_id": 6}, {"id": 81, "ch": 1, "freq": 1, "q": "Choose the correct option in terms of Issues related to professional responsibility:", "opts": ["Confidentiality", "Intellectual property rights", "Both Confidentiality & Intellectual property rights", "Managing Client Relationships"], "ans": 2, "topic": "Professional Ethics", "exp": "في **Chapter 1**، قضايا المسؤولية المهنية والأخلاقية (**Issues of Professional Responsibility**) بتشمل حاجات أساسية زي:\n1. **Confidentiality** (السرية واحترام أسرار العميل والشركة)\n2. **Intellectual Property Rights - IPR** (حقوق الملكية الفكرية)\n3. **Competence** (الكفاءة)\n4. **Computer Misuse** (عدم إساءة استخدام الحاسوب).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 81, "orig_id": 8}, {"id": 82, "ch": 2, "freq": 1, "q": "Which of these software engineering activities are not a part of software processes?", "opts": ["Software dependence", "Software development", "Software validation", "Software specification"], "ans": 0, "topic": "Software Process Activities", "exp": "الأنشطة الأربعة الأساسية لأي **Software Process** (في Chapter 2) هي:\n1. **Software Specification**\n2. **Software Development (Design & Implementation)**\n3. **Software Validation**\n4. **Software Evolution**\nمفيش نشاط اسمه Software dependence (المقصود هناك كان Dependability ودي من خصائص الـ Good Software مش Process activity).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 82, "orig_id": 10}, {"id": 83, "ch": 4, "freq": 1, "q": "In which one of the following ways the requirements are written in natural language on a standard form or template?", "opts": ["Natural language", "Design description languages", "Structured natural language", "Mathematical specifications"], "ans": 2, "topic": "Ways of Writing System Requirements", "exp": "لما نكتب الـ Requirements بلغة طبيعية بس جوه **Standard form or template** (نموذج موحد فيه خانات محددة للـ Inputs والـ Outputs والـ Action)، الطريقة دي اسمها **Structured Natural Language**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 83, "orig_id": 15}, {"id": 84, "ch": 4, "freq": 1, "q": "The SRS (Software Requirements Specification) is said to be realism if and only if:", "opts": ["every requirement stated therein is verifiable", "the requirements can be implemented given available budget and technology", "no subset of individual requirements described in it conflict with each other"], "ans": 1, "topic": "Validation Checks (Realism)", "exp": "في فحوصات الـ **Requirements Validation** (في Chapter 4):\n- **Realism check**: التأكد إن المتطلبات **يمكن تنفيذها فعلياً** في حدود الـ **Budget (الميزانية)** والـ **Technology** المتاحة.\n- الاختيار a ده تعريف الـ **Verifiability**.\n- الاختيار c ده تعريف الـ **Consistency**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 84, "orig_id": 18}, {"id": 85, "ch": 1, "freq": 1, "q": "Application systems that run on a local computer that include all necessary functionality and do not need to be connected to a network?", "opts": ["Interactive transaction-based applications", "Systems of systems", "Stand-alone applications", "Embedded control systems"], "ans": 2, "topic": "Application Types", "exp": "من أنواع التطبيقات في **Chapter 1**: الـ **Stand-alone applications** هي البرامج اللي بتشتغل على جهاز محلي (**Local computer**) وفيها كل الـ Functionality اللي محتاجاها ومش محتاجة تتصل بالشبكة (زي برامج الـ Office أو الـ Photo design على الـ PC).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 85, "orig_id": 23}, {"id": 86, "ch": 1, "freq": 1, "q": "Software control systems that control and manage hardware devices?", "opts": ["Embedded control systems", "Interactive transaction-based applications", "Stand-alone applications", "Entertainment systems"], "ans": 0, "topic": "Application Types", "exp": "الـ **Embedded control systems** هي الأنظمة البرمجية اللي بتتحكم وتدير أجهزة الـ **Hardware** (زي السوفتوير اللي جوه الغسالة، الميكروويف، أو فرامل العربية ABS).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 86, "orig_id": 24}, {"id": 87, "ch": 2, "freq": 1, "q": "Individual components are tested independently?", "opts": ["System testing", "Customer testing", "Acceptance Testing", "unit Testing"], "ans": 3, "topic": "Stages of Testing", "exp": "مراحل الـ Testing في **Chapter 2** تلاتة:\n1. **Development / Unit (Component) Testing**: كل Component أو Unit بيتجرب لوحده بشكل مستقل (**Tested independently**).\n2. **System Testing**: بنجرب السيستم كله على بعضه بعد دمج الـ Components.\n3. **Acceptance (Customer) Testing**: العميل بيجرب السيستم ببيانات حقيقية قبل الاستلام.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 87, "orig_id": 26}, {"id": 88, "ch": 2, "freq": 1, "q": "(COTS) is abbreviation for?", "opts": ["commercial-off-the-shelf systems", "commercial-off-the-shelfs system", "commerce-off-the-shelf system", "commercial-off-this-shelf systems"], "ans": 0, "topic": "Reuse-oriented Software Engineering", "exp": "في الـ **Reuse-oriented software engineering** (في Chapter 2)، اختصار **COTS** معناه **Commercial-off-the-shelf systems**، وهي الأنظمة الجاهزة المتباعة في السوق اللي نقدر نركبها ونعدل في الإعدادات بتاعتها (**Configuration**) بدل ما نبني من الصفر.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 88, "orig_id": 27}, {"id": 89, "ch": 2, "freq": 1, "q": "Which of the following RUP phases is responsible for System design, programming and testing?", "opts": ["Construction", "Transition", "Elaboration", "Inception"], "ans": 0, "topic": "RUP Phases", "exp": "مرحلة الـ **Construction** في الـ RUP هي اللي بنبني فيها السيستم فعلياً، وبتشمل **System design, programming, and testing**، وفي نهايتها بيكون عندنا نظام شغال ووثائق جاهزة.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 89, "orig_id": 29}, {"id": 90, "ch": 2, "freq": 1, "q": "Prototype focus on the product that are not well-understood?", "opts": ["true", "false"], "ans": 0, "topic": "Software Prototyping", "exp": "صح (**True**)! الهدف الأساسي من الـ **Prototype** هو استكشاف وتوضيح أجزاء السيستم اللي مش مفهومة كويس (**Not well-understood**) للعميل أو للمطورين بدل إعادة شرح الأجزاء المفهومة أصلاً.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 90, "orig_id": 30}, {"id": 91, "ch": 3, "freq": 1, "q": "Who of the following organize group of software developers?", "opts": ["Product Owner", "Scrum master", "Team", "none of the above"], "ans": 2, "topic": "Scrum Team Self-Organization", "exp": "في **Scrum**، فريق التطوير هو **Self-organizing team**، يعني الـ **Team** هو اللي بينظم نفسه ويوزع الشغل بين أعضاؤه، مش الـ Scrum Master (الـ Scrum Master دوره Facilitator بس مش مدير بينظم التيم).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 91, "orig_id": 34}, {"id": 92, "ch": 1, "freq": 1, "q": "What is related between software engineering and system engineering?", "opts": ["System engineering include software engineering", "Software engineering include system engineering"], "ans": 0, "topic": "Software vs System Engineering", "exp": "في **Chapter 1**: الـ **System Engineering** أعم وأشمل (لأنها بتهتم بالـ Hardware والـ Software والـ Process مع بعض)، وبالتالي **System engineering includes software engineering** (هندسة النظم تشمل هندسة البرمجيات كجزء منها).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 92, "orig_id": 46}, {"id": 93, "ch": 3, "freq": 1, "q": "In agile development program specification, design and implementation are interleaved", "opts": ["true", "false"], "ans": 0, "topic": "Agile Characteristics", "exp": "صح (**True**)! من أهم مبادئ الـ **Agile development** إن الـ Specification والـ Design والـ Implementation بيكونوا **Interleaved** (متداخلين مع بعض وبيتنفذوا سوا في حلقات قصيرة).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 93, "orig_id": 47}, {"id": 94, "ch": 2, "freq": 1, "q": "A ...... is an initial version of a system used to demonstrate concepts and try out design options.", "opts": ["Prototype", "Increment", "Non"], "ans": 0, "topic": "Software Prototyping", "exp": "التعريف الرسمي للـ **Prototype** في **Chapter 2**: هو **Initial version of a system** (نسخة مبدئية من النظام) بنستخدمها عشان نوضح الأفكار (**Demonstrate concepts**) ونجرب خيارات التصميم (**Try out design options**) ونكتشف المتطلبات.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 94, "orig_id": 52}, {"id": 95, "ch": 3, "freq": 1, "q": "Agile Software Development is based on?", "opts": ["linear development", "incremental development", "Both incremental development & iterative", "iterative development"], "ans": 2, "topic": "Agile Principles", "exp": "الـ **Agile Software Development** مبني على الاتنين مع بعض: **Both incremental & iterative development** (بنسلم السيستم على أجزاء Increments، وبنعدل ونحسن في دورات متكررة Iterations).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 95, "orig_id": 58}, {"id": 96, "ch": 3, "freq": 1, "q": "The Scrum master is a facilitator who organize group of software developer", "opts": ["true", "false"], "ans": 1, "topic": "Scrum Master vs Team", "exp": "غلط (**False**)! فخ مهم جداً في الامتحان: الـ Scrum Master فعلاً هو **Facilitator**، لكن اللي بيعمل **Organize group of software developers** هو الـ **Team** نفسه، لأن الفريق في Scrum بيدير وينظم نفسه بنفسه (**Self-organizing team**).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 96, "orig_id": 59}, {"id": 97, "ch": 2, "freq": 1, "q": "What is the purpose of the evolution phase in the waterfall model?", "opts": ["defining the organization of the system & implementing the system", "changing the system to change customer needs", "checking that it does what the customer wants", "defining what the system should do"], "ans": 1, "topic": "Software Evolution / Maintenance", "exp": "الهدف من مرحلة الـ **Evolution (Maintenance)** هو تعديل وتغيير السيستم عشان يواكب تغير احتياجات العميل والبيزنس (**Changing the system to meet changing customer needs**).\n- الاختيار a ده Design & Implementation.\n- الاختيار c ده Validation.\n- الاختيار d ده Specification.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 97, "orig_id": 60}, {"id": 98, "ch": 1, "freq": 1, "q": "What are attributes of good software?", "opts": ["Software maintainability", "Software functionality", "Software development", "Software maintainability & functionality"], "ans": 3, "topic": "Attributes of Good Software", "exp": "البرمجيات الجيدة (**Good Software**) لازم تقدم الـ **Functionality** والـ Performance المطلوبين للعميل، وفي نفس الوقت تتميز بخصائص الجودة وأهمها الـ **Maintainability** (سهولة التعديل والصيانة)، الـ Dependability، الـ Efficiency، والـ Acceptability.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 98, "orig_id": 62}, {"id": 99, "ch": 1, "freq": 1, "q": "Which of these is true?", "opts": ["Generic products and customized products are types of software products", "Generic products are produced by organization and sold to open market", "Customized products are commissioned by particular customer", "All of the mentioned"], "ans": 3, "topic": "Generic vs Customized Products", "exp": "كل الجمل دي صحيحة ١٠٠٪ (**All of the mentioned**) في **Chapter 1**:\n- أنواع المنتجات البرمجية نوعين: **Generic** و **Customized**.\n- الـ **Generic** بتنتجها شركة وتبيعها في السوق المفتوح (**Open market**) لأي مشتري.\n- الـ **Customized** بيطلبها عميل معين (**Commissioned by a particular customer**) مخصوص ليه.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 99, "orig_id": 64}, {"id": 100, "ch": 1, "freq": 1, "q": "Which of these does not affect different types of software as a whole?", "opts": ["Heterogeneity", "Flexibility", "Business and social change", "Security"], "ans": 1, "topic": "General Issues Affecting Software", "exp": "في **Chapter 1**، العوامل التلاتة العامة اللي بتأثر على معظم أنواع البرمجيات (**General issues that affect most software**) هي:\n1. **Heterogeneity** (التنوع في الأجهزة والشبكات)\n2. **Business and social change** (سرعة التغير في البيزنس والمجتمع)\n3. **Security and trust** (الأمان والثقة)\nوبالتالي **Flexibility** مش واحدة من التلات قضايا دي.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 100, "orig_id": 65}, {"id": 101, "ch": 2, "freq": 1, "q": "Which one of the following models is not suitable for accommodating any change?", "opts": ["Build & Fix Model", "Prototyping Model", "RAD Model", "Waterfall Model"], "ans": 3, "topic": "Waterfall Model Limitations", "exp": "أكبر عيب في الـ **Waterfall Model** هو صعوبة استيعاب التغييرات بعد ما العملية تبدأ (**Not suitable for accommodating change**) بسبب الفصل الصارم بين المراحل وتجميد المتطلبات بدري.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 101, "orig_id": 67}, {"id": 102, "ch": 1, "freq": 1, "q": "Software costs more to maintain than it does to develop.", "opts": ["True", "False"], "ans": 0, "topic": "Software Engineering Costs", "exp": "صح (**True**)! جملة نصية مهمة في **Chapter 1**: بالنسبة للأنظمة اللي بتعيش فترة طويلة، تكلفة الصيانة والتطوير بعد التشغيل (**Maintenance costs**) بتكون أعلى من تكلفة بناء النظام في الأول (أحياناً بتوصل لأضعاف تكلفة التطوير).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 102, "orig_id": 74}, {"id": 103, "ch": 2, "freq": 1, "q": "The longer a fault exists in software:", "opts": ["the more tedious its removal becomes", "the more costly it is to detect and correct", "the less likely it is to be properly corrected", "All of the mentioned"], "ans": 3, "topic": "Software Faults & Change Costs", "exp": "كل ما الـ **Fault (الخطأ)** يقعد فترة أطول في السوفتوير من غير ما يتكتشف (مثلاً غلطة في الـ Requirements متكتشفتش غير بعد الـ Deployment)، بيكون أصعب وأكتر مللاً في إزالته، وأغلى بكتير في اكتشافه وتصليحه، وأقل احتمالاً إنه يتصلح صح ١٠٠٪ (**All of the mentioned**).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 103, "orig_id": 77}, {"id": 104, "ch": 3, "freq": 1, "q": "Agile methods seem to work best when team members have a relatively high skill level.", "opts": ["True", "False"], "ans": 0, "topic": "Agile Team Skills", "exp": "صح (**True**)! طرق الـ **Agile** بتعتمد على التطوير السريع والـ Refactoring المستمر وقلة التوثيق التفصيلي، وعشان كده بتنجح بأفضل شكل لما يكون أعضاء الفريق عندهم **Relatively high skill level** (مهارة عالية نسبياً).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 104, "orig_id": 82}, {"id": 105, "ch": 3, "freq": 1, "q": "Which of the following does not apply to agility to a software process?", "opts": ["Uses incremental product delivery strategy", "Only essential work products are produced", "Eliminate the use of project planning and testing", "All of the mentioned"], "ans": 2, "topic": "Agile Misconceptions", "exp": "مفهوم خاطئ مشهور عن الـ Agile: الـ Agile **مش بيلغي** التخطيط والاختبار (**Does NOT eliminate project planning and testing**)! بالعكس، في الـ Agile بنخطط باستمرار (Incremental planning) وبنختبر أكتر كمان (Test-first development & Automated testing).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 105, "orig_id": 83}, {"id": 106, "ch": 3, "freq": 1, "q": "In agile development it is more important to build software that meets the customers’ needs today than worry about features that might be needed in the future.", "opts": ["True", "False"], "ans": 0, "topic": "Simple Design (XP)", "exp": "صح (**True**)! ده مبدأ الـ **Simple Design** في الـ Agile/XP: بنصمم ونبني الكود اللي يلبي احتياجات العميل **النهاردة (Today)** بأبسط شكل، ومبنعقدش التصميم عشان ميزات محتملة في المستقبل ممكن متتطلبش أصلاً.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 106, "orig_id": 84}, {"id": 107, "ch": 3, "freq": 1, "q": "In XP, as soon as the work on a task is complete, it is integrated into the whole system.", "opts": ["True", "False"], "ans": 0, "topic": "Continuous Integration (XP)", "exp": "صح (**True**)! ده مبدأ الـ **Continuous Integration** في الـ XP: أول ما المبرمج يخلص أي Task، بيدمجها فوراً (**Integrated into the whole system**) ولازم كل الـ Unit tests تعدي بنجاح.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 107, "orig_id": 85}, {"id": 108, "ch": 3, "freq": 1, "q": "Is a customer involved test development and validation in XP?", "opts": ["Yes", "No", "It may vary from Customer to Customer"], "ans": 2, "topic": "Customer Involvement in XP Testing", "exp": "في الـ **XP**، المفروض الـ **On-site customer** يشارك في كتابة الـ Acceptance tests، لكن في الواقع العملي (زي ما بيذكر Sommerville) الموضوع ده **بيختلف من عميل للتاني (It may vary from Customer to Customer)** لأن العملاء غالباً وقتهم محدود ومش متعودين يكتبوا اختبارات.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 108, "orig_id": 88}, {"id": 109, "ch": 3, "freq": 1, "q": "Incremental development in Extreme Programming (XP) is supported through a system release once every month.", "opts": ["True", "False"], "ans": 1, "topic": "XP Release Cycle", "exp": "غلط (**False**)! في الـ **XP**، الـ System releases بتكون متقاربة وصغيرة وبتتسلم كل **أسبوعين (Every 2 weeks)** مش كل شهر (أما الـ Scrum Sprint هي اللي بتكون من ٢ لـ ٤ أسابيع).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 109, "orig_id": 89}, {"id": 110, "ch": 3, "freq": 1, "q": "Tests are automated in Extreme Programming.", "opts": ["True", "False"], "ans": 0, "topic": "Automated Testing (XP)", "exp": "صح (**True**)! في الـ **XP**، كل الـ Tests بتكون **Automated** (مؤتمتة باستخدام Automated testing framework زي JUnit) عشان تقدر تشتغل أوتوماتيك مع كل تعديل أو Integration جديد.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 110, "orig_id": 90}, {"id": 111, "ch": 3, "freq": 1, "q": "Developers work individually on a release and they compare their results with other developers before forwarding that release to customers.", "opts": ["True", "False"], "ans": 1, "topic": "Pair Programming & Collective Ownership", "exp": "غلط (**False**)! في الـ **XP** المبرمجين مبيشتغلوش لوحدهم بمعزل عن بعض؛ هما بيشتغلوا في أزواج (**Pair programming**) وبيعملوا **Continuous integration** أول بأول عدة مرات في اليوم.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 111, "orig_id": 92}, {"id": 112, "ch": 3, "freq": 1, "q": "Which four framework activities are found in the Extreme Programming (XP)?", "opts": ["analysis, design, coding, testing", "planning, analysis, design, coding", "planning, design, coding, testing", "planning, analysis, coding, testing"], "ans": 2, "topic": "XP Framework Activities", "exp": "الأربع أنشطة الإطارية (**Four framework activities**) في الـ **Extreme Programming (XP)** هي بالترتيب:\n1. **Planning**\n2. **Design**\n3. **Coding**\n4. **Testing**\n(إحفظها: **P-D-C-T**، مفيش مرحلة اسمها Analysis منفصلة لأن الـ User stories بتتكتب في الـ Planning).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 112, "orig_id": 93}, {"id": 113, "ch": 4, "freq": 1, "q": "A stakeholder is anyone who will purchase the completed software system under development.", "opts": ["True", "False"], "ans": 1, "topic": "Stakeholders Definition", "exp": "غلط (**False**)! الـ **Stakeholder** مش بس الشخص اللي بيدفع فلوس أو بيشتري السيستم؛ الـ Stakeholder هو **أي شخص أو جهة بتتأثر بالسيستم بطريقة مباشرة أو غير مباشرة** (زي الـ End users، الـ Managers، الـ System maintainers، وحتى الجهات الرقابية).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 113, "orig_id": 97}, {"id": 114, "ch": 4, "freq": 1, "q": "Which is one of the most important stakeholder from the following?", "opts": ["Entry level personnel", "Middle level stakeholder", "Managers", "Users of the software"], "ans": 3, "topic": "Stakeholders", "exp": "أهم **Stakeholder** على الإطلاق هما **Users of the software** (المستخدمين الفعليين للبرنامج) لأن السيستم بيتبني أساساً عشان يخدمهم ويحقق احتياجاتهم.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 114, "orig_id": 98}, {"id": 115, "ch": 2, "freq": 1, "q": "………….. focus on software itself.", "opts": ["Waterfall Model", "Incremental model", "Spiral Model", "Reused Model"], "ans": 1, "topic": "Incremental vs Waterfall", "exp": "الـ **Incremental model** (والـ Agile) بيركز على الـ **Software itself** (تسليم برنامج شغال للعميل بسرعة)، بعكس الـ **Waterfall Model** اللي بيركز بشدة على الـ **Documentation**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 115, "orig_id": 119}, {"id": 116, "ch": 2, "freq": 1, "q": "…………… focus on Documentation.", "opts": ["Waterfall Model", "Incremental Model", "Spiral Model", "Reused Model"], "ans": 0, "topic": "Waterfall Model", "exp": "الـ **Waterfall Model** بيركز على الـ **Documentation** (التوثيق الكامل في نهاية كل مرحلة قبل الانتقال للمرحلة اللي بعدها).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 116, "orig_id": 120}, {"id": 117, "ch": 2, "freq": 1, "q": "…………. involve a customer in development.", "opts": ["Waterfall Model", "Incremental model", "Spiral Model", "Reused Model"], "ans": 1, "topic": "Incremental Development", "exp": "الـ **Incremental model** بيشرك العميل في عملية التطوير (**Involves a customer in development**) عشان يدي Feedback على كل Increment بيتسلم.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 117, "orig_id": 121}, {"id": 118, "ch": 3, "freq": 1, "q": "The customer is told to write test-scenarios (series of accepted test) within the story scenario also before any implementation or coding (Test–first develop) in …………", "opts": ["Waterfall Model", "Incremental model", "Spiral Model", "Reused Model"], "ans": 1, "topic": "Test-First Development & Incremental", "exp": "كتابة سيناريوهات الاختبار قبل الكود (**Test-first development**) مع مشاركة العميل في كتابة الـ Acceptance tests من ضمن الـ Story بتحصل في نماذج التطوير التدريجي والـ Agile (**Incremental model** من بين الاختيارات المتاحة).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 118, "orig_id": 127}, {"id": 119, "ch": 2, "freq": 1, "q": "(Unit testing) concentrates on testing The System after integration", "opts": ["True", "False"], "ans": 1, "topic": "Stages of Testing", "exp": "غلط (**False**)! الـ **Unit testing** بيركز على اختبار كل Component لوحده قبل الدمج؛ أما اختبار السيستم بعد الـ Integration فده اسمه **System testing**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 119, "orig_id": 132}, {"id": 120, "ch": 3, "freq": 1, "q": "The (programmer) in Extreme Programming (XP) team is Responsible of Analyze, design, test, program and integrate codes.", "opts": ["True", "False"], "ans": 0, "topic": "XP Team Responsibilities", "exp": "صح (**True**)! في الـ **XP** مفيش تقسيم تقليدي (واحد محلل وواحد مصمم وواحد تيستر)؛ الـ **Programmer** في فريق XP بيقوم بكل المهام دي مع فريقه: تحليل الـ Stories، التصميم البسيط، كتابة الـ Tests، البرمجة، والـ Continuous Integration.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 120, "orig_id": 136}, {"id": 121, "ch": 3, "freq": 1, "q": "SCRUM technique is NOT suitable for projects that have several changes of requirements during project development.", "opts": ["True", "False"], "ans": 1, "topic": "Scrum Suitability", "exp": "غلط (**False**)! بالعكس تماماً، طريقة **Scrum** هي **Agile method** ومناسبة جداً للمشاريع اللي فيها تغييرات مستمرة في المتطلبات أثناء التطوير.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 121, "orig_id": 139}, {"id": 122, "ch": 1, "freq": 1, "q": "……………….. focuses on theory and fundamentals", "opts": ["Software engineering", "System engineering", "Computer Science", "Operating system"], "ans": 2, "topic": "Computer Science vs Software Engineering", "exp": "في **Chapter 1**: الـ **Computer Science (علوم الحاسب)** بتركز على الـ **Theory and fundamentals** (النظريات والأسس)، بينما الـ **Software Engineering** بتركز على الجوانب العملية (**Practicalities**) لبناء وتسليم برمجيات مفيدة.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 122, "orig_id": 147}, {"id": 123, "ch": 2, "freq": 1, "q": "Prototypes are normally undocumented.", "opts": ["True", "False"], "ans": 0, "topic": "Software Prototyping", "exp": "صح (**True**)! الـ **Prototypes** في العادة بتكون **Undocumented** (غير موثقة) لأن الهدف منها السرعة وتجربة الأفكار مع العميل، وده أحد الأسباب اللي بيخلينا نرمي الـ Throw-away prototype ومبنكملش عليه كـ Production system.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 123, "orig_id": 149}, {"id": 124, "ch": 2, "freq": 1, "q": "Software is not developed as single unit but as series of increments refers to ………..", "opts": ["Waterfall Model", "Incremental model", "Spiral Model", "Reused Model"], "ans": 1, "topic": "Incremental Development", "exp": "تطوير البرنامج كسلسلة من الأجزاء (**Series of increments**) بدل وحدة واحدة كاملة هو التعريف المباشر للـ **Incremental model**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 124, "orig_id": 157}, {"id": 125, "ch": 4, "freq": 1, "q": "More detailed Description (System requirements are more detailed requirements and may include more technical information) refers to ……………", "opts": ["User Requirement Specification", "System Requirement Specification", "Both a&b", "none"], "ans": 1, "topic": "User vs System Requirements", "exp": "الوصف الأكثر تفصيلاً اللي بيحتوي على معلومات تقنية دقيقة (**More detailed description and technical information**) هو الـ **System Requirement Specification** (بينما الـ User Requirements بتكون عامة وبلغة العميل).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 125, "orig_id": 160}, {"id": 126, "ch": 4, "freq": 1, "q": "Interviews normally be …………...", "opts": ["Open only", "closed only", "open and closed"], "ans": 2, "topic": "Interviewing in Elicitation", "exp": "في **Chapter 4**، المقابلات الفعالة (**Effective interviews**) في العادة بتكون مزيج من النوعين (**Open and closed**)؛ بنبدأ بنقاش مفتوح وبعدين نسأل أسئلة محددة لتوضيح التفاصيل.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 126, "orig_id": 161}, {"id": 127, "ch": 4, "freq": 1, "q": "Type of the interview based on pre-determined list of questions……………", "opts": ["Open interview", "Closed interview"], "ans": 1, "topic": "Closed vs Open Interviews", "exp": "المقابلة اللي بتعتمد على قايمة أسئلة محددة مسبقاً (**Pre-determined list of questions**) اسمها **Closed interview** (أو Structured interview)، أما الـ **Open interview** فمفيش فيها أجندة مسبقة وبنستكشف المشكلة بحرية مع الـ Stakeholders.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 127, "orig_id": 163}, {"id": 128, "ch": 4, "freq": 1, "q": "Scenarios are real life examples of how system can be used.", "opts": ["True", "False"], "ans": 0, "topic": "Scenarios in Elicitation", "exp": "صح (**True**)! في **Chapter 4**، الـ **Scenarios** هي أمثلة واقعية (**Real-life examples**) بتوصف إزاي المستخدم هيتفاعل مع السيستم في موقف معين، والناس بتلاقيها أسهل بكتير في الفهم والنقاش من المتطلبات المجردة.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 128, "orig_id": 167}, {"id": 129, "ch": 4, "freq": 1, "q": "A step in waterfall model that involves a meeting with the customer to understand the requirements.", "opts": ["Requirements elicitation", "Requirements specification", "Customer review", "Requirements management"], "ans": 0, "topic": "Requirements Elicitation", "exp": "الخطوة اللي بنقعد فيها مع العميل عشان نفهم ونجمع المتطلبات (**Understand the requirements**) هي **Requirements elicitation**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 129, "orig_id": 169}, {"id": 130, "ch": 1, "freq": 1, "q": "What translates a natural or an artificial language into another representation of that language?", "opts": ["ERP systems", "Transaction-based information systems", "Language processing systems", "None of the mentioned"], "ans": 2, "topic": "Language Processing Systems", "exp": "الأنظمة اللي بتترجم لغة طبيعية أو لغة برمجة لتمثيل تاني لنفس اللغة (زي الـ Compilers والـ Translators) اسمها **Language processing systems**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 130, "orig_id": 178}, {"id": 131, "ch": 4, "freq": 1, "q": "Different stakeholders have different views on the importance and priority of requirements and, sometimes, these views are conflicting.", "opts": ["True", "False"], "ans": 0, "topic": "Stakeholder Conflicts", "exp": "صح (**True**)! في **Chapter 4**، بسبب تعدد الـ **Stakeholders** واختلاف أهدافهم، دايماً بيكون عندهم وجهات نظر مختلفة ومتعارضة أحياناً (**Conflicting views**) بخصوص أهمية وأولوية المتطلبات، وعشان كده بنحتاج مرحلة **Requirements negotiation**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 131, "orig_id": 179}, {"id": 132, "ch": 4, "freq": 1, "q": "Which part of SRS define the expected readership of the document and describe its version history?", "opts": ["Introduction", "Glossary", "Index", "preface"], "ans": 3, "topic": "SRS Document Structure", "exp": "في جدول هيكل وثيقة الـ **SRS** في **Chapter 4**:\n- **Preface (المقدمة التمهيدية)**: بتحدد القراء المتوقعين للوثيقة (**Expected readership**) وتاريخ الإصدارات (**Version history**).\n- **Introduction**: بتوصف الحاجة للسيستم ووظائفه باختصار.\n- **Glossary**: بتعرف المصطلحات التقنية (**Technical terms**).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 132, "orig_id": 181}, {"id": 133, "ch": 4, "freq": 1, "q": "Post-condition setting out what must be true before the function is called.", "opts": ["True", "False"], "ans": 1, "topic": "Structured Specifications (Pre/Post-conditions)", "exp": "غلط (**False**)! في الـ **Form-based / Structured specifications** في **Chapter 4**:\n- اللي لازم يكون متحقق **قبل (Before)** استدعاء الوظيفة اسمه **Pre-condition**.\n- أما الـ **Post-condition** فهو اللي بيكون متحقق **بعد (After)** ما الوظيفة تخلص.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 133, "orig_id": 184}, {"id": 134, "ch": 4, "freq": 1, "q": "\"Consider a system where, a heat sensor detects an intrusion and alerts the security company.\" What kind of a requirement the system is providing?", "opts": ["Functional", "non-functional", "Known Requirement", "Domain Requirement"], "ans": 0, "topic": "Functional Requirements Example", "exp": "سؤال تطبيقي جميل في **Chapter 4**: جملة بتوصف **السيستم هيعمل إيه لما يحصل حدث معين** (حساس الحرارة يكتشف اختراق ويبعت إنذار لشركة الأمن) ← ده وصف لسلوك ووظيفة محددة للسيستم، يعني **Functional Requirement**.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 134, "orig_id": 191}, {"id": 135, "ch": 4, "freq": 1, "q": "Which of the following statements explains portability in non-functional requirements?", "opts": ["It is a degree to which software running on one platform can easily be converted to run on another platform", "It cannot be enhanced by using languages, OS' and tools that are universally available and standardized", "the ability of the system to behave consistently in a user-acceptable manner when operating within the environment for which the system was intended.", "Reflects the extent to which the system can be repaired in the event of a failure"], "ans": 0, "topic": "Portability Definition", "exp": "الـ **Portability (قابلية النقل)** في الـ Non-functional requirements معناها مدى سهولة تحويل وتشغيل السوفتوير اللي شغال على بيئة/منصة معينة (**One platform**) عشان يشتغل على منصة تانية (**Another platform**).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 135, "orig_id": 193}, {"id": 136, "ch": 4, "freq": 1, "q": "Which one of the following systems need to have detailed requirements because safety and security have to be analyzed in detail?", "opts": ["Critical systems", "Business systems", "Entertainment systems", "Library management systems"], "ans": 0, "topic": "Critical Systems Requirements", "exp": "الأنظمة الحرجة (**Critical systems** زي أنظمة الطيران والأجهزة الطبية) لازم يكون ليها **Detailed requirements** مفصلة ودقيقة جداً قبل البناء، لأن الـ **Safety** والـ **Security** لازم يتحللوا بالتفصيل الممل لأن أي غلطة فيها خطيرة جداً.", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 136, "orig_id": 194}, {"id": 137, "ch": 4, "freq": 1, "q": "Non-functional requirements can be safely ignored in modern software development projects", "opts": ["True", "False"], "ans": 1, "topic": "Importance of Non-Functional Requirements", "exp": "غلط طبعاً (**False**)! في **Chapter 4** بيأكد إن الـ **Non-functional requirements** غالباً بتكون **أخطر وأهم** من الـ Functional requirements الفردية؛ لأن لو السيستم محققش الـ Non-functional requirements (زي الأمان أو السرعة)، السيستم كله ممكن يبقى غير صالح للاستخدام (**Useless**).", "is_hot": false, "is_quirk": false, "tier": 2, "score": 84, "rank": 137, "orig_id": 195}, {"id": 138, "ch": 3, "freq": 1, "q": "A list of ‘to do’ items which the Scrum team must develop?", "opts": ["Product Backlog", "Product", "back up product"], "ans": 0, "topic": "Scrum Artifacts", "exp": "قايمة الـ **'to do' items** (المهام والميزات المطلوب تطويرها في المشروع) في Scrum هي التعريف الحرفي للـ **Product Backlog** من السلايدز.", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 138, "orig_id": 33}, {"id": 139, "ch": 4, "freq": 1, "q": "One characteristic of excellent requirements is unambiguous?", "opts": ["true", "false"], "ans": 0, "topic": "Requirements Qualities", "exp": "صح (**True**)! من أهم خصائص الـ **Requirements** الممتازة إنها تكون **Unambiguous** (واضحة وغير غامضة ومبتحتملش أكتر من تفسير)، بالإضافة لكونها **Complete** و **Consistent**.", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 139, "orig_id": 37}, {"id": 140, "ch": 3, "freq": 1, "q": "In scrum, ……… are a development iteration", "opts": ["Sprint", "Sprant", "Non"], "ans": 0, "topic": "Scrum Sprint", "exp": "في **Scrum**، دورة التطوير الواحدة (**Development iteration**) بتسمى **Sprint**، وعادة مدتها بتكون من ٢ لـ ٤ أسابيع.", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 140, "orig_id": 41}, {"id": 141, "ch": 3, "freq": 1, "q": "In …… don’t effect in the system if team members leave", "opts": ["pair programing", "Uni programing", "tripartite programing", "non"], "ans": 0, "topic": "Pair Programming Benefits", "exp": "من أهم فوائد الـ **Pair Programming** نشر المعرفة بالكود بين أعضاء الفريق (**Spreads knowledge across the team**)، فلو حد من التيم ساب الشغل، السيستم مبيتأثرش لأن زمايله عارفين الكود شغال إزاي.", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 141, "orig_id": 49}, {"id": 142, "ch": 1, "freq": 1, "q": "“Software engineers should not use their technical skills to misuse other people’s computers.” Here the term misuse refers to:", "opts": ["Unauthorized access to computer material", "Unauthorized modification of computer material", "Dissemination of viruses or other malware", "All of the mentioned"], "ans": 3, "topic": "Professional Ethics (Computer Misuse)", "exp": "في **Chapter 1** تحت بند **Computer Misuse**، إساءة استخدام الحاسوب بتشمل كل دول (**All of the mentioned**): من أول الحاجات التافهة نسبياً زي اللعب على جهاز الموظف، لحد الدخول غير المصرح به (**Unauthorized access**)، تعديل البيانات، أو نشر الفيروسات (**Viruses/Malware**).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 142, "orig_id": 61}, {"id": 143, "ch": 2, "freq": 1, "q": "RAD stands for:", "opts": ["Relative Application Development", "Rapid Application Development", "Rapid Application Document", "None of the mentioned"], "ans": 1, "topic": "Software Process Models (RAD)", "exp": "اختصار **RAD** في نماذج تطوير البرمجيات هو **Rapid Application Development** (التطوير السريع للتطبيقات).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 143, "orig_id": 66}, {"id": 144, "ch": 2, "freq": 1, "q": "Which one of the following is not a phase of Prototyping Model?", "opts": ["Quick Design", "Coding", "Prototype Refinement", "Engineer Product"], "ans": 1, "topic": "Prototyping Model", "exp": "مراحل الـ **Prototyping Model** القياسية بتشمل: Communication, **Quick Design**, Modeling/Building Prototype, Deployment/Evaluation & **Prototype Refinement**, و **Engineer Product**؛ ومفيش مرحلة منفصلة اسمها الصريح **Coding**.", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 144, "orig_id": 68}, {"id": 145, "ch": 2, "freq": 1, "q": "SDLC stands for:", "opts": ["Software Development Life Cycle", "System Development Life cycle", "Software Design Life Cycle", "System Design Life Cycle"], "ans": 0, "topic": "SDLC", "exp": "اختصار **SDLC** هو **Software Development Life Cycle** (دورة حياة تطوير البرمجيات).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 145, "orig_id": 69}, {"id": 146, "ch": 2, "freq": 1, "q": "Selection of a model is based on:", "opts": ["Requirements", "Development team & Users", "Project type and associated risk", "All of the mentioned"], "ans": 3, "topic": "Process Model Selection", "exp": "اختيار الـ **Software Process Model** المناسب بيعتمد على كل العوامل دي مع بعض (**All of the mentioned**): طبيعة الـ **Requirements** (واضحة ولا متغيرة)، فريق التطوير والمستخدمين، ونوع المشروع والمخاطر المرتبطة بيه (**Associated risk**).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 146, "orig_id": 70}, {"id": 147, "ch": 2, "freq": 1, "q": "Which two models doesn’t allow defining requirements early in the cycle?", "opts": ["Waterfall & RAD", "Prototyping & Spiral", "Prototyping & RAD", "Waterfall & Spiral"], "ans": 1, "topic": "Process Models Comparison", "exp": "الـ **Prototyping & Spiral** بيتعاملوا مع المشاريع اللي متطلباتها مش واضحة من البداية، فمبيعتمدوش على تعريف كل الـ Requirements بالكامل في أول الدورة (بعكس الـ Waterfall و الـ RAD اللي بيحددوا المتطلبات بدري).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 147, "orig_id": 71}, {"id": 148, "ch": 2, "freq": 1, "q": "One can choose Waterfall Model if the project development schedule is tight.", "opts": ["True", "False"], "ans": 1, "topic": "Waterfall Model", "exp": "غلط (**False**)! الـ **Waterfall Model** بياخد وقت طويل ومبيطلعش أي برنامج شغال غير في آخر المشروع خالص، فماينفعش نختاره لو جدول المشروع ضيق (**Tight schedule**)؛ في الحالة دي الـ Incremental أو الـ RAD أو الـ Agile هما الأنسب.", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 148, "orig_id": 72}, {"id": 149, "ch": 1, "freq": 1, "q": "_____________ & _____________ are two kinds of software products.", "opts": ["CAD, CAM", "Firmware, Embedded", "Generic, Customized", "None of the mentioned"], "ans": 2, "topic": "Software Product Types", "exp": "النوعين الأساسيين للـ **Software Products** في **Chapter 1** هما: **Generic products** (منتجات عامة للسوق) و **Customized products** (منتجات مخصصة لعميل معين).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 149, "orig_id": 73}, {"id": 150, "ch": 4, "freq": 1, "q": "………… is a person who deals directly with the system", "opts": ["Stakeholder", "Developer", "Tester"], "ans": 0, "topic": "Stakeholders", "exp": "الـ **Stakeholder** هو أي شخص أو طرف بيتعامل مع السيستم أو بيتأثر بيه بشكل مباشر أو غير مباشر (بما فيهم الـ End-users والـ Managers).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 150, "orig_id": 151}, {"id": 151, "ch": 2, "freq": 1, "q": "Find out which phase is not available in SDLC?", "opts": ["Coding", "Testing", "Maintenance", "Abstraction"], "ans": 3, "topic": "SDLC Phases", "exp": "مراحل الـ **SDLC** بتشمل Coding, Testing, و Maintenance، لكن مفيش مرحلة في الـ SDLC اسمها **Abstraction** (الـ Abstraction ده مفهوم برمجي وهندسي مش مرحلة زمنية).", "is_hot": false, "is_quirk": false, "tier": 3, "score": 74, "rank": 151, "orig_id": 174}];
+    const OPTION_LETTERS = ["A", "B", "C", "D"];
+
+    const CHAPTER_INFO = {
+      1: {
+        title: "Chapter 1: Introduction",
+        count: 19,
+        arSummary: "أساسيات هندسة البرمجيات، الفرق الجوهري بين الـ Generic والـ Customized products، خصائص الـ Good Software الأربعة، وأخلاقيات المهنة."
+      },
+      2: {
+        title: "Chapter 2: Software Processes",
+        count: 44,
+        arSummary: "نماذج الـ Waterfall والـ Incremental والـ Reuse-oriented، أنشطة الـ Process الأربعة، الـ Throw-away Prototyping، ومراحل ومنظورات الـ RUP."
+      },
+      3: {
+        title: "Chapter 3: Agile Software Development",
+        count: 46,
+        arSummary: "قيم الـ Agile Manifesto، مقارنة الـ Plan-driven والـ Agile، ممارسات الـ XP (Refactoring, TDD, Pair Programming)، وأدوار ومراحل الـ Scrum."
+      },
+      4: {
+        title: "Chapter 4: Requirements Engineering",
+        count: 42,
+        arSummary: "الـ Functional والـ Non-functional requirements، هيكل وثيقة الـ SRS، تقنيات الـ Elicitation (Interviews & Ethnography)، وفحوصات الـ Validation."
+      }
+    };
+
+    const state = {
+      activePage: "dashboard",
+      soundEnabled: true,
+      userAnswers: {},
+      bookmarks: {},
+      revealedIds: {},
+      streak: 0,
+
+      // Bento Micro-UI states
+      bentoTier: 1,
+      bentoPresetSec: 30,
+      bentoChapter: 3,
+
+      // Solving Mode
+      solveChapter: "all",
+      solveTier: "all",
+      solveStatus: "all",
+      solveSearch: "",
+      solvePageSize: 10,
+      solveCurrentPage: 1,
+      solveTimerMode: "off",
+      solveTimerBaseSec: 45,
+      solveTimerRemaining: 45,
+      solveTimerRunning: false,
+
+      // Focus Arena
+      focusDeck: "all",
+      focusIndex: 0,
+      focusShuffledIds: null,
+      focusAutoAdvance: false,
+      focusTimerMode: "q30",
+      focusTimerTotalSec: 30,
+      focusTimerRemaining: 30,
+      focusTimerRunning: false
+    };
+
+    let activeTimerInterval = null;
+    let audioCtx = null;
+
+    function playSfx(type) {
+      if (!state.soundEnabled) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!audioCtx && AudioCtx) audioCtx = new AudioCtx();
+        if (!audioCtx) return;
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        if (type === "correct") {
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.06);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } else if (type === "wrong") {
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(210, now);
+          osc.frequency.setValueAtTime(155, now + 0.08);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+          osc.start(now);
+          osc.stop(now + 0.24);
+        } else {
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(880, now);
+          gain.gain.setValueAtTime(0.025, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+          osc.start(now);
+          osc.stop(now + 0.045);
+        }
+      } catch (e) {}
+    }
+
+    function loadSaved() {
+      try {
+        const a = localStorage.getItem("vectr_nextjs_answers_v3");
+        if (a) state.userAnswers = JSON.parse(a);
+        const b = localStorage.getItem("vectr_nextjs_bookmarks_v3");
+        if (b) state.bookmarks = JSON.parse(b);
+      } catch (e) {}
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem("vectr_nextjs_answers_v3", JSON.stringify(state.userAnswers));
+        localStorage.setItem("vectr_nextjs_bookmarks_v3", JSON.stringify(state.bookmarks));
+      } catch (e) {}
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatRtlExplanation(rawExp) {
+      let safe = escapeHtml(rawExp);
+      safe = safe.replace(/\*\*(.+?)\*\*/g, (_, inner) => {
+        if (/[A-Za-z]/.test(inner)) {
+          return `<span class="ltr-inline-chip">${inner}</span>`;
+        }
+        return `<strong class="text-white font-bold">${inner}</strong>`;
+      });
+      safe = safe.replace(/`([^`]+)`/g, `<span class="ltr-inline-chip">$1</span>`);
+      return safe;
+    }
+
+    function formatTime(sec) {
+      const s = Math.max(0, Math.floor(sec));
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
+    }
+
+    function stopTimers() {
+      if (activeTimerInterval) {
+        clearInterval(activeTimerInterval);
+        activeTimerInterval = null;
+      }
+      state.solveTimerRunning = false;
+      state.focusTimerRunning = false;
+    }
+
+    function updateTelemetryUI() {
+      const total = CHOSEN_QUESTIONS.length;
+      let correct = 0;
+      let wrong = 0;
+      Object.keys(state.userAnswers).forEach(k => {
+        const q = CHOSEN_QUESTIONS.find(item => item.id === Number(k));
+        if (!q) return;
+        if (state.userAnswers[k] === q.ans) correct++;
+        else wrong++;
+      });
+      const solved = correct + wrong;
+      const acc = solved > 0 ? Math.round((correct / solved) * 100) + "%" : "0%";
+      const saved = Object.keys(state.bookmarks).filter(k => state.bookmarks[k]).length;
+
+      document.getElementById("navMasteryCounter").textContent = `${solved}/${total}`;
+      document.getElementById("bentoSolvedCount").textContent = solved;
+      document.getElementById("bentoAccuracyPct").textContent = acc;
+      document.getElementById("bentoCorrectCount").textContent = correct;
+      document.getElementById("bentoWrongCount").textContent = wrong;
+      document.getElementById("bentoSavedCount").textContent = saved;
+    }
+
+    function buildQuestionCardHtml(q) {
+      const userAns = state.userAnswers[q.id];
+      const isAnswered = userAns !== undefined;
+      const isRevealed = !!state.revealedIds[q.id];
+      const showExp = isAnswered || isRevealed;
+      const isCorrect = isAnswered && userAns === q.ans;
+      const isSaved = !!state.bookmarks[q.id];
+
+      let leftBorder = q.tier === 1 ? "border-l-4 border-l-amber-400" : "";
+      if (isAnswered) {
+        leftBorder = isCorrect ? "border-l-4 border-l-emerald-500" : "border-l-4 border-l-rose-500";
+      }
+
+      const tierBadge = q.tier === 1
+        ? `<span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/25">🔥 MUST-KNOW • ${q.score}% PROB</span>`
+        : (q.tier === 2
+            ? `<span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/25">⚡ HIGH-YIELD • ${q.score}%</span>`
+            : `<span class="font-mono text-xs font-semibold px-2.5 py-1 rounded-md bg-white/[0.05] text-neutral-300 border border-white/10">📘 FOUNDATION</span>`);
+
+      const quirkBadge = q.is_quirk
+        ? `<span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-rose-500/15 text-rose-300 border border-rose-500/30">⚠️ EXAM KEY ALERT</span>`
+        : "";
+
+      const optsHtml = q.opts.map((optText, oIdx) => {
+        const letter = OPTION_LETTERS[oIdx] || String(oIdx + 1);
+        let btnCls = "bg-white/[0.02] hover:bg-white/[0.06] border-white/10 hover:border-sky-500/40 text-neutral-200";
+        let keyCls = "bg-white/[0.05] border-white/10 text-neutral-400";
+
+        if (showExp) {
+          if (oIdx === q.ans) {
+            btnCls = "bg-emerald-500/15 border-emerald-500/50 text-white font-semibold";
+            keyCls = "bg-emerald-500 text-neutral-950 border-emerald-400 font-bold";
+          } else if (isAnswered && oIdx === userAns && userAns !== q.ans) {
+            btnCls = "bg-rose-500/15 border-rose-500/50 text-rose-100";
+            keyCls = "bg-rose-500 text-white border-rose-400 font-bold";
+          } else {
+            btnCls = "bg-white/[0.01] border-white/5 text-neutral-500 opacity-60";
+          }
+        }
+
+        return `
+          <button type="button" data-card-action="answer" data-qid="${q.id}" data-opt="${oIdx}" class="w-full text-left rounded-xl border px-4 py-3.5 text-sm sm:text-base transition-all duration-150 flex items-start gap-3.5 ${btnCls}">
+            <span class="font-mono text-xs h-7 w-7 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 ${keyCls}">${letter}</span>
+            <span class="flex-1 leading-snug">${escapeHtml(optText)}</span>
+          </button>
+        `;
+      }).join("");
+
+      let verdictHtml = "";
+      if (showExp) {
+        const cLet = OPTION_LETTERS[q.ans] || "";
+        const cTxt = escapeHtml(q.opts[q.ans]);
+        if (isAnswered && isCorrect) {
+          verdictHtml = `
+            <div class="inline-flex items-center gap-2 rounded-lg bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-xs sm:text-sm font-bold text-emerald-300">
+              <span>✓ إجابة صحيحة! عاش يا هندسة</span>
+              <span class="font-mono text-xs" dir="ltr">(${cLet}: ${cTxt})</span>
+            </div>`;
+        } else if (isAnswered && !isCorrect) {
+          const pickedLbl = userAns === -1 ? "انتهى الوقت ⏱️" : `اخترت ${OPTION_LETTERS[userAns]}`;
+          verdictHtml = `
+            <div class="inline-flex items-center gap-2 rounded-lg bg-rose-500/15 border border-rose-500/30 px-3 py-1.5 text-xs sm:text-sm font-bold text-rose-300">
+              <span>✗ إجابة غير صحيحة (${pickedLbl}) — الإجابة الصح:</span>
+              <span class="font-mono text-xs text-white" dir="ltr">${cLet}) ${cTxt}</span>
+            </div>`;
+        } else {
+          verdictHtml = `
+            <div class="inline-flex items-center gap-2 rounded-lg bg-sky-500/15 border border-sky-500/30 px-3 py-1.5 text-xs sm:text-sm font-bold text-sky-300">
+              <span>👁️ الإجابة النموذجية:</span>
+              <span class="font-mono text-xs text-white" dir="ltr">${cLet}) ${cTxt}</span>
+            </div>`;
+        }
+      }
+
+      const drawerHtml = showExp ? `
+        <div class="bg-neutral-950/80 border-t border-white/10 px-6 py-5" dir="rtl">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            ${verdictHtml}
+            <button type="button" data-card-action="retry" data-qid="${q.id}" class="rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-3 py-1 text-xs font-semibold text-neutral-300 hover:text-white">
+              ↺ حل السؤال تاني
+            </button>
+          </div>
+          <p class="rtl-arabic text-neutral-200 text-sm sm:text-base whitespace-pre-line m-0">${formatRtlExplanation(q.exp)}</p>
+        </div>
+      ` : "";
+
+      return `
+        <article class="glass-panel rounded-2xl overflow-hidden transition-all duration-200 ${leftBorder}">
+          <div class="bg-white/[0.02] border-b border-white/10 px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-white/[0.06] text-white border border-white/10">#${String(q.id).padStart(3, "0")}</span>
+              ${tierBadge}
+              ${quirkBadge}
+              <span class="text-xs font-medium px-2.5 py-1 rounded-md bg-white/[0.03] text-neutral-400 border border-white/5">Ch ${q.ch} • ${escapeHtml(q.topic)}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              ${!showExp ? `<button type="button" data-card-action="reveal" data-qid="${q.id}" class="rounded-lg bg-white/[0.04] hover:bg-white/[0.09] border border-white/10 px-2.5 py-1 text-xs font-medium text-neutral-300 hover:text-white">👁️ الشرح</button>` : ""}
+              <button type="button" data-card-action="bookmark" data-qid="${q.id}" class="rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${isSaved ? 'bg-amber-500/20 border-amber-500/40 text-amber-300' : 'bg-white/[0.04] hover:bg-white/[0.09] border-white/10 text-neutral-400 hover:text-white'}">
+                ${isSaved ? "★ Saved" : "☆ Save"}
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-lg sm:text-xl font-bold text-white leading-relaxed mb-5 text-left" dir="ltr">${escapeHtml(q.q)}</h3>
+            <div class="grid grid-cols-1 gap-2.5" dir="ltr">
+              ${optsHtml}
+            </div>
+          </div>
+          ${drawerHtml}
+        </article>
+      `;
+    }
+
+    // Solving Mode Filtering & Rendering
+    function getSolvingFiltered() {
+      return CHOSEN_QUESTIONS.filter(q => {
+        if (state.solveChapter !== "all" && q.ch !== Number(state.solveChapter)) return false;
+        if (state.solveTier !== "all") {
+          if (state.solveTier === "quirk") {
+            if (!q.is_quirk) return false;
+          } else if (q.tier !== Number(state.solveTier)) {
+            return false;
+          }
+        }
+        if (state.solveStatus !== "all") {
+          const a = state.userAnswers[q.id];
+          if (state.solveStatus === "unanswered" && a !== undefined) return false;
+          if (state.solveStatus === "wrong" && (a === undefined || a === q.ans)) return false;
+          if (state.solveStatus === "bookmarked" && !state.bookmarks[q.id]) return false;
+        }
+        if (state.solveSearch.trim() !== "") {
+          const term = state.solveSearch.toLowerCase().trim();
+          const hit = q.q.toLowerCase().includes(term) || q.topic.toLowerCase().includes(term) || q.exp.toLowerCase().includes(term) || q.opts.some(o => o.toLowerCase().includes(term));
+          if (!hit) return false;
+        }
+        return true;
+      });
+    }
+
+    function getSolvingPageSlice() {
+      const filtered = getSolvingFiltered();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / state.solvePageSize));
+      if (state.solveCurrentPage > totalPages) state.solveCurrentPage = totalPages;
+      if (state.solveCurrentPage < 1) state.solveCurrentPage = 1;
+      const start = (state.solveCurrentPage - 1) * state.solvePageSize;
+      const slice = filtered.slice(start, start + state.solvePageSize);
+      return { filtered, slice, totalPages, start };
+    }
+
+    function renderSolvingMode() {
+      const { filtered, slice, totalPages, start } = getSolvingPageSlice();
+      const container = document.getElementById("solvingListContainer");
+      const summary = document.getElementById("solveSummaryText");
+      const pagBar = document.getElementById("solvingPaginationBar");
+
+      if (filtered.length === 0) {
+        summary.textContent = "Showing 0 Chosen Questions";
+        pagBar.classList.add("hidden");
+        container.innerHTML = `
+          <div class="glass-panel rounded-3xl p-12 text-center">
+            <p class="rtl-arabic text-base text-neutral-300 mb-4" dir="rtl">لا توجد أسئلة مطابقة للفلتر الحالي.</p>
+            <button type="button" id="solveResetFiltersInlineBtn" class="rounded-xl bg-sky-500 text-neutral-950 font-bold px-5 py-2.5 text-xs">Reset All Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      pagBar.classList.remove("hidden");
+      summary.textContent = `Showing ${start + 1}–${start + slice.length} of ${filtered.length} Chosen Questions (Sorted by Priority)`;
+      container.innerHTML = slice.map(q => buildQuestionCardHtml(q)).join("");
+
+      document.getElementById("solvePrevPageBtn").disabled = state.solveCurrentPage <= 1;
+      document.getElementById("solveNextPageBtn").disabled = state.solveCurrentPage >= totalPages;
+      document.getElementById("solvePageIndicator").innerHTML = `Page <strong class="text-white">${state.solveCurrentPage}</strong> of <strong class="text-white">${totalPages}</strong>`;
+    }
+
+    function startSolvingTimer() {
+      stopTimers();
+      const mode = state.solveTimerMode;
+      const readout = document.getElementById("solveTimerReadout");
+      const durSel = document.getElementById("solveTimerDurationSelect");
+      const pauseBtn = document.getElementById("solveTimerPauseBtn");
+      const resetBtn = document.getElementById("solveTimerResetBtn");
+
+      if (mode === "off") {
+        readout.textContent = "OFF";
+        readout.className = "font-mono text-lg font-extrabold px-3 py-1 rounded-xl border bg-white/[0.03] border-white/10 text-neutral-500";
+        durSel.classList.add("hidden");
+        pauseBtn.classList.add("hidden");
+        resetBtn.classList.add("hidden");
+        return;
+      }
+
+      durSel.classList.remove("hidden");
+      pauseBtn.classList.remove("hidden");
+      resetBtn.classList.remove("hidden");
+
+      const { slice } = getSolvingPageSlice();
+      const totalSec = mode === "question" ? state.solveTimerBaseSec : state.solveTimerBaseSec * Math.max(1, slice.length);
+      state.solveTimerRemaining = totalSec;
+      state.solveTimerRunning = true;
+      pauseBtn.textContent = "⏸";
+
+      function syncReadout() {
+        readout.textContent = formatTime(state.solveTimerRemaining);
+        if (state.solveTimerRemaining <= 6) {
+          readout.className = "font-mono text-lg font-extrabold px-3 py-1 rounded-xl border bg-rose-500/20 border-rose-500 text-rose-300 animate-pulse";
+        } else {
+          readout.className = "font-mono text-lg font-extrabold px-3 py-1 rounded-xl border bg-sky-500/15 border-sky-500/30 text-sky-300";
+        }
+      }
+
+      syncReadout();
+      activeTimerInterval = setInterval(() => {
+        if (!state.solveTimerRunning) return;
+        state.solveTimerRemaining--;
+        if (state.solveTimerRemaining <= 5 && state.solveTimerRemaining > 0) playSfx("tick");
+        syncReadout();
+
+        if (state.solveTimerRemaining <= 0) {
+          playSfx("wrong");
+          const { slice: curSlice } = getSolvingPageSlice();
+          if (mode === "question") {
+            const nextUnans = curSlice.find(q => state.userAnswers[q.id] === undefined && !state.revealedIds[q.id]);
+            if (nextUnans) {
+              state.userAnswers[nextUnans.id] = -1;
+              saveState();
+              updateTelemetryUI();
+              renderSolvingMode();
+              state.solveTimerRemaining = totalSec;
+              syncReadout();
+            } else {
+              stopTimers();
+            }
+          } else {
+            curSlice.forEach(q => { state.revealedIds[q.id] = true; });
+            stopTimers();
+            renderSolvingMode();
+          }
+        }
+      }, 1000);
+    }
+
+    // Focus & Speedrun Deck
+    function getFocusDeckList() {
+      let pool = CHOSEN_QUESTIONS.filter(q => {
+        if (state.focusDeck === "tier1") return q.tier === 1;
+        if (state.focusDeck === "ch1") return q.ch === 1;
+        if (state.focusDeck === "ch2") return q.ch === 2;
+        if (state.focusDeck === "ch3") return q.ch === 3;
+        if (state.focusDeck === "ch4") return q.ch === 4;
+        if (state.focusDeck === "mistakes") {
+          const a = state.userAnswers[q.id];
+          return a !== undefined && a !== q.ans;
+        }
+        if (state.focusDeck === "saved") return !!state.bookmarks[q.id];
+        return true;
+      });
+      if (state.focusShuffledIds) {
+        const order = new Map(state.focusShuffledIds.map((id, i) => [id, i]));
+        pool.sort((a, b) => (order.get(a.id) ?? 999) - (order.get(b.id) ?? 999));
+      }
+      return pool;
+    }
+
+    function renderFocusMode() {
+      const deck = getFocusDeckList();
+      const wrap = document.getElementById("focusSingleQuestionWrap");
+      const dots = document.getElementById("focusDotsContainer");
+      const posBadge = document.getElementById("focusPositionBadge");
+      const streakBadge = document.getElementById("focusStreakBadge");
+
+      streakBadge.textContent = `🔥 Streak: ${state.streak}`;
+
+      if (deck.length === 0) {
+        posBadge.textContent = "Q 0 / 0";
+        dots.innerHTML = "";
+        wrap.innerHTML = `
+          <div class="glass-panel rounded-3xl p-12 text-center">
+            <p class="rtl-arabic text-base text-neutral-300 mb-4" dir="rtl">لا توجد أسئلة في هذا الـ Deck حالياً.</p>
+            <button type="button" id="focusResetAllDeckBtn" class="rounded-xl bg-sky-500 text-neutral-950 font-bold px-5 py-2.5 text-xs">Load All 151 Chosen Questions</button>
+          </div>
+        `;
+        return;
+      }
+
+      state.focusIndex = ((state.focusIndex % deck.length) + deck.length) % deck.length;
+      const curQ = deck[state.focusIndex];
+      posBadge.textContent = `Q ${state.focusIndex + 1} / ${deck.length}`;
+
+      dots.innerHTML = deck.map((q, idx) => {
+        const ans = state.userAnswers[q.id];
+        let cls = "bg-white/[0.03] border-white/10 text-neutral-400";
+        if (ans !== undefined) {
+          cls = ans === q.ans
+            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
+            : "bg-rose-500/20 border-rose-500/50 text-rose-300";
+        }
+        if (idx === state.focusIndex) {
+          cls += " ring-2 ring-sky-400 text-white font-extrabold";
+        }
+        return `<button type="button" data-focus-dot="${idx}" class="h-7 w-8 rounded-md border font-mono text-[11px] transition-all ${cls}">${idx + 1}</button>`;
+      }).join("");
+
+      wrap.innerHTML = buildQuestionCardHtml(curQ);
+      syncFocusTimerUI();
+    }
+
+    function syncFocusTimerUI() {
+      const readout = document.getElementById("focusTimerReadout");
+      const toggleBtn = document.getElementById("focusTimerToggleBtn");
+      if (state.focusTimerMode === "off") {
+        readout.textContent = "OFF";
+        readout.className = "font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-white/[0.03] border-white/10 text-neutral-500";
+        toggleBtn.textContent = "Disabled";
+        toggleBtn.disabled = true;
+        return;
+      }
+      toggleBtn.disabled = false;
+      toggleBtn.textContent = state.focusTimerRunning ? "⏸ Pause" : "▶ Start";
+      readout.textContent = formatTime(state.focusTimerRemaining);
+      if (state.focusTimerRemaining <= 5) {
+        readout.className = "font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-rose-500/20 border-rose-500 text-rose-300 animate-pulse";
+      } else {
+        readout.className = "font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-amber-500/15 border-amber-500/30 text-amber-300";
+      }
+    }
+
+    function initFocusTimer(autoStart) {
+      stopTimers();
+      const map = { off: 0, q15: 15, q30: 30, q45: 45, q60: 60, blitz5: 300, blitz10: 600 };
+      state.focusTimerTotalSec = map[state.focusTimerMode] || 0;
+      state.focusTimerRemaining = state.focusTimerTotalSec;
+      state.focusTimerRunning = !!(autoStart && state.focusTimerMode !== "off");
+      syncFocusTimerUI();
+
+      if (state.focusTimerRunning) {
+        runFocusTimerInterval();
+      }
+    }
+
+    function runFocusTimerInterval() {
+      if (activeTimerInterval) clearInterval(activeTimerInterval);
+      state.focusTimerRunning = true;
+      syncFocusTimerUI();
+      activeTimerInterval = setInterval(() => {
+        if (!state.focusTimerRunning) return;
+        state.focusTimerRemaining--;
+        if (state.focusTimerRemaining <= 5 && state.focusTimerRemaining > 0) playSfx("tick");
+        syncFocusTimerUI();
+
+        if (state.focusTimerRemaining <= 0) {
+          playSfx("wrong");
+          const deck = getFocusDeckList();
+          const curQ = deck[state.focusIndex];
+          if (state.focusTimerMode.startsWith("q") && curQ) {
+            if (state.userAnswers[curQ.id] === undefined) {
+              state.userAnswers[curQ.id] = -1;
+              state.streak = 0;
+              saveState();
+              updateTelemetryUI();
+              renderFocusMode();
+            }
+            state.focusTimerRemaining = state.focusTimerTotalSec;
+            syncFocusTimerUI();
+          } else {
+            stopTimers();
+            syncFocusTimerUI();
+          }
+        }
+      }, 1000);
+    }
+
+    function switchPage(pageName) {
+      state.activePage = pageName;
+      document.querySelectorAll(".view-section").forEach(sec => {
+        sec.classList.toggle("active-view", sec.id === `view-${pageName}`);
+      });
+      document.querySelectorAll("[data-page-btn]").forEach(btn => {
+        const isAct = btn.getAttribute("data-page-btn") === pageName;
+        btn.className = isAct
+          ? "nav-pill-btn flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 bg-white/[0.1] text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)]"
+          : "nav-pill-btn flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 text-neutral-400 hover:text-white";
+      });
+
+      stopTimers();
+      if (pageName === "dashboard") {
+        updateTelemetryUI();
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      } else if (pageName === "solving") {
+        renderSolvingMode();
+        if (state.solveTimerMode !== "off") startSolvingTimer();
+      } else if (pageName === "focus") {
+        renderFocusMode();
+        initFocusTimer(false);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function handleCardAction(e, context) {
+      const btn = e.target.closest("[data-card-action]");
+      if (!btn) return;
+      const action = btn.getAttribute("data-card-action");
+      const qid = Number(btn.getAttribute("data-qid"));
+      const qObj = CHOSEN_QUESTIONS.find(item => item.id === qid);
+      if (!qObj) return;
+
+      if (action === "answer") {
+        const optIdx = Number(btn.getAttribute("data-opt"));
+        state.userAnswers[qid] = optIdx;
+        if (optIdx === qObj.ans) {
+          state.streak++;
+          playSfx("correct");
+        } else {
+          state.streak = 0;
+          playSfx("wrong");
+        }
+        saveState();
+        updateTelemetryUI();
+
+        if (context === "solving") {
+          renderSolvingMode();
+          if (state.solveTimerMode === "question" && state.solveTimerRunning) {
+            state.solveTimerRemaining = state.solveTimerBaseSec;
+          }
+        } else {
+          renderFocusMode();
+          if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
+            state.focusTimerRemaining = state.focusTimerTotalSec;
+            syncFocusTimerUI();
+          }
+          if (state.focusAutoAdvance && optIdx === qObj.ans) {
+            setTimeout(() => {
+              state.focusIndex++;
+              renderFocusMode();
+            }, 620);
+          }
+        }
+      } else if (action === "retry") {
+        delete state.userAnswers[qid];
+        delete state.revealedIds[qid];
+        saveState();
+        updateTelemetryUI();
+        if (context === "solving") renderSolvingMode();
+        else renderFocusMode();
+      } else if (action === "reveal") {
+        state.revealedIds[qid] = !state.revealedIds[qid];
+        if (context === "solving") renderSolvingMode();
+        else renderFocusMode();
+      } else if (action === "bookmark") {
+        if (state.bookmarks[qid]) delete state.bookmarks[qid];
+        else state.bookmarks[qid] = true;
+        saveState();
+        updateTelemetryUI();
+        if (context === "solving") renderSolvingMode();
+        else renderFocusMode();
+      }
+    }
+
+    // Initialize GSAP Animations & Event Listeners
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) lucide.createIcons();
+      loadSaved();
+      updateTelemetryUI();
+
+      // Spotlight mouse tracker on Bento cards
+      document.querySelectorAll(".bento-spotlight").forEach(card => {
+        card.addEventListener("mousemove", (e) => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+          card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+        });
+      });
+
+      // Register GSAP & ScrollTrigger animations (GPU-composited properties only)
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Hero Entrance Timeline
+        const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        heroTl.fromTo(
+          ".gsap-hero-item",
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.75, stagger: 0.1 }
+        );
+
+        // 2. Bento Grid ScrollTrigger Staggered Reveal
+        gsap.fromTo(
+          ".gsap-bento-card",
+          { y: 28, scale: 0.96, opacity: 0 },
+          {
+            y: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.09,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".gsap-bento-grid",
+              start: "top 82%"
+            }
+          }
+        );
+
+        // 3. Scroll-Scrubbed Storytelling Section with gsap.matchMedia()
+        const mm = gsap.matchMedia();
+        mm.add("(min-width: 768px)", () => {
+          const scrubTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: ".gsap-scrub-section",
+              start: "top 18%",
+              end: "+=750",
+              scrub: 1,
+              pin: true,
+              anticipatePin: 1
+            }
+          });
+          scrubTl
+            .fromTo(".gsap-scrub-progress", { scaleY: 0.18 }, { scaleY: 1, ease: "none" }, 0)
+            .fromTo(
+              ".gsap-scrub-stage",
+              { y: 24, scale: 0.96, opacity: 0.35 },
+              { y: 0, scale: 1, opacity: 1, stagger: 0.22, ease: "power2.out" },
+              0
+            );
+        });
+
+        mm.add("(max-width: 767px)", () => {
+          gsap.fromTo(
+            ".gsap-scrub-stage",
+            { y: 20, scale: 0.97, opacity: 0 },
+            {
+              y: 0,
+              scale: 1,
+              opacity: 1,
+              duration: 0.6,
+              stagger: 0.12,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: ".gsap-scrub-section",
+                start: "top 80%"
+              }
+            }
+          );
+        });
+      }
+
+      // Navigation Listeners
+      document.getElementById("brandLogoBtn").addEventListener("click", () => switchPage("dashboard"));
+      document.querySelectorAll("[data-page-btn]").forEach(btn => {
+        btn.addEventListener("click", () => switchPage(btn.getAttribute("data-page-btn")));
+      });
+
+      document.getElementById("sfxToggleBtn").addEventListener("click", () => {
+        state.soundEnabled = !state.soundEnabled;
+        document.getElementById("sfxLabel").textContent = state.soundEnabled ? "SFX On" : "Muted";
+      });
+
+      document.getElementById("heroLaunchSolvingBtn").addEventListener("click", () => {
+        state.solveTier = "all";
+        state.solveChapter = "all";
+        state.solveCurrentPage = 1;
+        document.getElementById("solveTierSelect").value = "all";
+        document.getElementById("solveChapterSelect").value = "all";
+        switchPage("solving");
+      });
+
+      document.getElementById("heroLaunchSpeedrunBtn").addEventListener("click", () => {
+        state.focusDeck = "tier1";
+        state.focusIndex = 0;
+        document.getElementById("focusDeckSelect").value = "tier1";
+        switchPage("focus");
+      });
+
+      // Bento Card 1: Priority Tier Selector
+      document.getElementById("bentoTierSelector").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-bento-tier]");
+        if (!btn) return;
+        const t = Number(btn.getAttribute("data-bento-tier"));
+        state.bentoTier = t;
+        document.querySelectorAll(".bento-tier-btn").forEach(b => {
+          const bt = Number(b.getAttribute("data-bento-tier"));
+          b.className = bt === t
+            ? "bento-tier-btn rounded-2xl border p-3 text-left transition-all text-amber-300 border-amber-500/40 bg-amber-500/10"
+            : "bento-tier-btn rounded-2xl border p-3 text-left transition-all border-white/10 bg-white/[0.02] text-neutral-400 hover:text-white";
+        });
+        const descMap = {
+          1: "🔥 يشمل أهم 76 سؤال لا يخلو منهم امتحان الميدتيرم.",
+          2: "⚡ يشمل 61 سؤال للمفاهيم الأساسية وفخاخ الصح والغلط.",
+          3: "📘 يشمل 14 سؤال للتعريفات والاختصارات المباشرة."
+        };
+        document.getElementById("bentoTierDescText").textContent = descMap[t];
+        document.getElementById("bentoLaunchTierLabel").textContent = `Solve Tier ${t}`;
+      });
+
+      document.getElementById("bentoLaunchSelectedTierBtn").addEventListener("click", () => {
+        state.solveTier = String(state.bentoTier);
+        state.solveChapter = "all";
+        state.solveCurrentPage = 1;
+        document.getElementById("solveTierSelect").value = String(state.bentoTier);
+        document.getElementById("solveChapterSelect").value = "all";
+        switchPage("solving");
+      });
+
+      // Bento Card 2: Reset Telemetry
+      document.getElementById("bentoResetTelemetryBtn").addEventListener("click", () => {
+        state.userAnswers = {};
+        state.revealedIds = {};
+        state.streak = 0;
+        saveState();
+        updateTelemetryUI();
+      });
+
+      // Bento Card 3: Speedrun Clock Presets
+      document.getElementById("bentoTimerPresetGroup").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-preset-sec]");
+        if (!btn) return;
+        const sec = Number(btn.getAttribute("data-preset-sec"));
+        state.bentoPresetSec = sec;
+        document.querySelectorAll(".bento-preset-btn").forEach(b => {
+          const bs = Number(b.getAttribute("data-preset-sec"));
+          b.className = bs === sec
+            ? "bento-preset-btn rounded-xl border py-2 font-bold transition-all bg-sky-500/20 border-sky-400 text-white"
+            : "bento-preset-btn rounded-xl border py-2 font-bold transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white";
+        });
+        document.getElementById("bentoLaunchSpeedrunLabel").textContent = `Launch ${sec}s Speedrun`;
+      });
+
+      document.getElementById("bentoLaunchSpeedrunPresetBtn").addEventListener("click", () => {
+        state.focusTimerMode = `q${state.bentoPresetSec}`;
+        document.getElementById("focusTimerModeSelect").value = state.focusTimerMode;
+        switchPage("focus");
+        initFocusTimer(true);
+      });
+
+      // Bento Card 4: Chapter Matrix
+      document.getElementById("bentoChapterSelector").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-bento-ch]");
+        if (!btn) return;
+        const ch = Number(btn.getAttribute("data-bento-ch"));
+        state.bentoChapter = ch;
+        document.querySelectorAll(".bento-ch-btn").forEach(b => {
+          const bc = Number(b.getAttribute("data-bento-ch"));
+          b.className = bc === ch
+            ? "bento-ch-btn rounded-2xl border p-3 text-left transition-all bg-white/[0.09] border-white/30 text-white"
+            : "bento-ch-btn rounded-2xl border p-3 text-left transition-all bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white";
+        });
+        const meta = CHAPTER_INFO[ch];
+        document.getElementById("bentoChTitle").textContent = meta.title;
+        document.getElementById("bentoChCount").textContent = `${meta.count} Chosen Questions`;
+        document.getElementById("bentoChSummary").textContent = meta.arSummary;
+        document.getElementById("bentoChSelectedLabel").textContent = `Selected: Chapter 0${ch}`;
+        document.getElementById("bentoSolveChBtn").textContent = `Solve Ch ${ch} in Pages`;
+        document.getElementById("bentoSpeedrunChBtn").textContent = `⚡ Speedrun Ch ${ch}`;
+      });
+
+      document.getElementById("bentoSolveChBtn").addEventListener("click", () => {
+        state.solveChapter = String(state.bentoChapter);
+        state.solveTier = "all";
+        state.solveCurrentPage = 1;
+        document.getElementById("solveChapterSelect").value = String(state.bentoChapter);
+        document.getElementById("solveTierSelect").value = "all";
+        switchPage("solving");
+      });
+
+      document.getElementById("bentoSpeedrunChBtn").addEventListener("click", () => {
+        state.focusDeck = `ch${state.bentoChapter}`;
+        state.focusIndex = 0;
+        document.getElementById("focusDeckSelect").value = `ch${state.bentoChapter}`;
+        switchPage("focus");
+      });
+
+      // Bento Card 5: Live Mini Diagnostic Quiz
+      document.getElementById("bentoMiniQuizGroup").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-mini-opt]");
+        if (!btn) return;
+        const picked = Number(btn.getAttribute("data-mini-opt"));
+        playSfx(picked === 2 ? "correct" : "wrong");
+        document.querySelectorAll(".bento-mini-opt").forEach(b => {
+          const idx = Number(b.getAttribute("data-mini-opt"));
+          if (idx === 2) {
+            b.className = "bento-mini-opt rounded-xl border px-3 py-2 text-left text-xs font-bold transition-all flex items-center gap-2 bg-emerald-500/20 border-emerald-500 text-white";
+          } else if (idx === picked) {
+            b.className = "bento-mini-opt rounded-xl border px-3 py-2 text-left text-xs font-medium transition-all flex items-center gap-2 bg-rose-500/20 border-rose-500 text-rose-200";
+          } else {
+            b.className = "bento-mini-opt rounded-xl border px-3 py-2 text-left text-xs font-medium transition-all flex items-center gap-2 bg-white/[0.01] border-white/5 text-neutral-500";
+          }
+        });
+        document.getElementById("bentoMiniQuizFeedback").innerHTML = `
+          <p class="rtl-arabic text-xs text-neutral-200 m-0">
+            ${picked === 2 ? "✓ عاش يا هندسة! " : "✗ ركز في الفخ ده: "}
+            في الـ <span class="ltr-inline-chip">Plan-driven</span> التكرار بيحصل داخل كل مرحلة لوحدها (<span class="ltr-inline-chip">Iteration occurs within activities</span>)، بينما في الـ <span class="ltr-inline-chip">Agile</span> المراحل متداخلة.
+          </p>
+        `;
+      });
+
+      // Scrub Stages Launchers
+      document.getElementById("scrubStagesContainer").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-stage-launch]");
+        if (!btn) return;
+        const ch = btn.getAttribute("data-stage-launch");
+        state.solveChapter = ch;
+        state.solveTier = "all";
+        state.solveCurrentPage = 1;
+        document.getElementById("solveChapterSelect").value = ch;
+        document.getElementById("solveTierSelect").value = "all";
+        switchPage("solving");
+      });
+
+      // Solving Mode Listeners
+      document.getElementById("solveChapterSelect").addEventListener("change", (e) => {
+        state.solveChapter = e.target.value;
+        state.solveCurrentPage = 1;
+        renderSolvingMode();
+        if (state.solveTimerMode !== "off") startSolvingTimer();
+      });
+
+      document.getElementById("solveTierSelect").addEventListener("change", (e) => {
+        state.solveTier = e.target.value;
+        state.solveCurrentPage = 1;
+        renderSolvingMode();
+        if (state.solveTimerMode !== "off") startSolvingTimer();
+      });
+
+      document.getElementById("solveStatusSelect").addEventListener("change", (e) => {
+        state.solveStatus = e.target.value;
+        state.solveCurrentPage = 1;
+        renderSolvingMode();
+      });
+
+      document.getElementById("solveSearchInput").addEventListener("input", (e) => {
+        state.solveSearch = e.target.value;
+        state.solveCurrentPage = 1;
+        renderSolvingMode();
+      });
+
+      document.getElementById("solvePageSizeSelect").addEventListener("change", (e) => {
+        state.solvePageSize = Number(e.target.value);
+        state.solveCurrentPage = 1;
+        renderSolvingMode();
+        if (state.solveTimerMode !== "off") startSolvingTimer();
+      });
+
+      document.getElementById("solveTimerModeSelect").addEventListener("change", (e) => {
+        state.solveTimerMode = e.target.value;
+        startSolvingTimer();
+      });
+
+      document.getElementById("solveTimerDurationSelect").addEventListener("change", (e) => {
+        state.solveTimerBaseSec = Number(e.target.value);
+        startSolvingTimer();
+      });
+
+      document.getElementById("solveTimerPauseBtn").addEventListener("click", () => {
+        state.solveTimerRunning = !state.solveTimerRunning;
+        document.getElementById("solveTimerPauseBtn").textContent = state.solveTimerRunning ? "⏸" : "▶";
+      });
+
+      document.getElementById("solveTimerResetBtn").addEventListener("click", () => {
+        startSolvingTimer();
+      });
+
+      document.getElementById("solveRevealPageBtn").addEventListener("click", () => {
+        const { slice } = getSolvingPageSlice();
+        slice.forEach(q => { state.revealedIds[q.id] = true; });
+        renderSolvingMode();
+      });
+
+      document.getElementById("solveResetPageBtn").addEventListener("click", () => {
+        const { slice } = getSolvingPageSlice();
+        slice.forEach(q => {
+          delete state.userAnswers[q.id];
+          delete state.revealedIds[q.id];
+        });
+        saveState();
+        updateTelemetryUI();
+        renderSolvingMode();
+      });
+
+      document.getElementById("solvePrevPageBtn").addEventListener("click", () => {
+        if (state.solveCurrentPage > 1) {
+          state.solveCurrentPage--;
+          renderSolvingMode();
+          if (state.solveTimerMode !== "off") startSolvingTimer();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
+
+      document.getElementById("solveNextPageBtn").addEventListener("click", () => {
+        const { totalPages } = getSolvingPageSlice();
+        if (state.solveCurrentPage < totalPages) {
+          state.solveCurrentPage++;
+          renderSolvingMode();
+          if (state.solveTimerMode !== "off") startSolvingTimer();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
+
+      document.getElementById("solvingListContainer").addEventListener("click", (e) => {
+        if (e.target.closest("#solveResetFiltersInlineBtn")) {
+          state.solveChapter = "all";
+          state.solveTier = "all";
+          state.solveStatus = "all";
+          state.solveSearch = "";
+          state.solveCurrentPage = 1;
+          document.getElementById("solveChapterSelect").value = "all";
+          document.getElementById("solveTierSelect").value = "all";
+          document.getElementById("solveStatusSelect").value = "all";
+          document.getElementById("solveSearchInput").value = "";
+          renderSolvingMode();
+          return;
+        }
+        handleCardAction(e, "solving");
+      });
+
+      // Focus Arena Listeners
+      document.getElementById("focusDeckSelect").addEventListener("change", (e) => {
+        state.focusDeck = e.target.value;
+        state.focusIndex = 0;
+        state.focusShuffledIds = null;
+        renderFocusMode();
+      });
+
+      document.getElementById("focusTimerModeSelect").addEventListener("change", (e) => {
+        state.focusTimerMode = e.target.value;
+        initFocusTimer(state.focusTimerMode !== "off");
+      });
+
+      document.getElementById("focusTimerToggleBtn").addEventListener("click", () => {
+        if (state.focusTimerMode === "off") return;
+        if (state.focusTimerRunning) {
+          state.focusTimerRunning = false;
+          syncFocusTimerUI();
+        } else {
+          runFocusTimerInterval();
+        }
+      });
+
+      document.getElementById("focusTimerResetBtn").addEventListener("click", () => {
+        initFocusTimer(true);
+      });
+
+      document.getElementById("focusAutoAdvanceCheck").addEventListener("change", (e) => {
+        state.focusAutoAdvance = e.target.checked;
+      });
+
+      document.getElementById("focusPrevBtn").addEventListener("click", () => {
+        state.focusIndex--;
+        if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
+          state.focusTimerRemaining = state.focusTimerTotalSec;
+        }
+        renderFocusMode();
+      });
+
+      document.getElementById("focusNextBtn").addEventListener("click", () => {
+        state.focusIndex++;
+        if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
+          state.focusTimerRemaining = state.focusTimerTotalSec;
+        }
+        renderFocusMode();
+      });
+
+      document.getElementById("focusRevealSingleBtn").addEventListener("click", () => {
+        const deck = getFocusDeckList();
+        const curQ = deck[state.focusIndex];
+        if (!curQ) return;
+        state.revealedIds[curQ.id] = !state.revealedIds[curQ.id];
+        renderFocusMode();
+      });
+
+      document.getElementById("focusShuffleBtn").addEventListener("click", () => {
+        const deck = getFocusDeckList();
+        const ids = deck.map(q => q.id);
+        for (let i = ids.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [ids[i], ids[j]] = [ids[j], ids[i]];
+        }
+        state.focusShuffledIds = ids;
+        state.focusIndex = 0;
+        renderFocusMode();
+      });
+
+      document.getElementById("focusDotsContainer").addEventListener("click", (e) => {
+        const dot = e.target.closest("[data-focus-dot]");
+        if (!dot) return;
+        state.focusIndex = Number(dot.getAttribute("data-focus-dot"));
+        if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
+          state.focusTimerRemaining = state.focusTimerTotalSec;
+        }
+        renderFocusMode();
+      });
+
+      document.getElementById("focusSingleQuestionWrap").addEventListener("click", (e) => {
+        if (e.target.closest("#focusResetAllDeckBtn")) {
+          state.focusDeck = "all";
+          state.focusIndex = 0;
+          document.getElementById("focusDeckSelect").value = "all";
+          renderFocusMode();
+          return;
+        }
+        handleCardAction(e, "focus");
+      });
+
+      // Keyboard Shortcuts in Focus Arena
+      document.addEventListener("keydown", (e) => {
+        if (["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
+        if (state.activePage !== "focus") return;
+        const deck = getFocusDeckList();
+        if (deck.length === 0) return;
+        const curQ = deck[state.focusIndex];
+        if (!curQ) return;
+
+        if (e.key === "ArrowRight") {
+          state.focusIndex++;
+          if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
+            state.focusTimerRemaining = state.focusTimerTotalSec;
+          }
+          renderFocusMode();
+        } else if (e.key === "ArrowLeft") {
+          state.focusIndex--;
+          if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
+            state.focusTimerRemaining = state.focusTimerTotalSec;
+          }
+          renderFocusMode();
+        } else if (["1", "2", "3", "4"].includes(e.key)) {
+          const optIdx = Number(e.key) - 1;
+          if (optIdx < curQ.opts.length) {
+            state.userAnswers[curQ.id] = optIdx;
+            if (optIdx === curQ.ans) {
+              state.streak++;
+              playSfx("correct");
+            } else {
+              state.streak = 0;
+              playSfx("wrong");
+            }
+            saveState();
+            updateTelemetryUI();
+            renderFocusMode();
+            if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
+              state.focusTimerRemaining = state.focusTimerTotalSec;
+              syncFocusTimerUI();
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
