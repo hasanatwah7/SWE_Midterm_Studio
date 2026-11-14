@@ -665,96 +665,142 @@
   </main>
 
   <!-- =========================================================================
-       VIEW 3: FOCUS & SPEEDRUN ARENA (One-by-One + Speedrun Clock)
+       VIEW 3: ULTRA-MINIMAL FULLSCREEN SPEEDRUN ARENA (Cockpit + Flying Timer)
        ========================================================================= -->
-  <main id="view-focus" class="view-section relative z-10 flex-1 py-10 px-4 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-4xl">
-      <!-- Speedrun HUD -->
-      <div class="glass-panel rounded-3xl p-5 sm:p-6 mb-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div class="space-y-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                ⚡ FOCUS &amp; SPEEDRUN ARENA
-              </span>
-              <span id="focusPositionBadge" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-white/[0.06] text-white border border-white/10">
-                Q 1 / 151
-              </span>
-              <span id="focusStreakBadge" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                🔥 Streak: 0
-              </span>
-            </div>
+  <main id="view-focus" class="view-section fixed inset-0 z-[70] bg-[#07080A] overflow-y-auto select-none">
+    <!-- Subtle Warm-Amber & Obsidian Cockpit Radial Glow (Night-Drive Inspired) -->
+    <div class="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_38%_28%,rgba(217,119,6,0.11),rgba(56,189,248,0.03)_48%,transparent_75%)]"></div>
 
-            <div class="flex flex-wrap items-center gap-2">
-              <select id="focusDeckSelect" aria-label="Select Focus Deck" class="rounded-xl bg-neutral-900 border border-white/10 px-3 py-2 text-xs font-semibold text-white">
-                <option value="all">Deck: All 151 Chosen Questions</option>
-                <option value="tier1">🔥 Deck: Tier 1 Must-Know (76 Qs)</option>
-                <option value="ch1">Deck: Chapter 1 Only (19 Qs)</option>
-                <option value="ch2">Deck: Chapter 2 Only (44 Qs)</option>
-                <option value="ch3">Deck: Chapter 3 Only (46 Qs)</option>
-                <option value="ch4">Deck: Chapter 4 Only (42 Qs)</option>
-                <option value="mistakes">Deck: Mistakes Only (✗)</option>
-                <option value="saved">Deck: Saved Only (★)</option>
-              </select>
-
-              <select id="focusTimerModeSelect" aria-label="Select Speedrun Timer" class="rounded-xl bg-neutral-900 border border-white/10 px-3 py-2 text-xs font-semibold text-sky-300">
-                <option value="off">⏱️ Timer: Off (Relaxed Focus)</option>
-                <option value="q15">⚡ Speedrun: 15s / Question</option>
-                <option value="q30" selected>⚡ Speedrun: 30s / Question</option>
-                <option value="q45">⏱️ Paced: 45s / Question</option>
-                <option value="q60">⏱️ Exam: 60s / Question</option>
-                <option value="blitz5">🏁 5-Min Blitz (Group)</option>
-                <option value="blitz10">🏁 10-Min Sprint (Group)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Timer Readout & Controls -->
-          <div class="flex items-center gap-2">
-            <div id="focusTimerReadout" class="font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-amber-500/15 border-amber-500/30 text-amber-300">
-              00:30
-            </div>
-            <button type="button" id="focusTimerToggleBtn" class="rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/15 px-3.5 py-2.5 text-xs font-bold text-white">
-              ▶ Start
-            </button>
-            <button type="button" id="focusTimerResetBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 px-3 py-2.5 text-xs font-mono text-neutral-300 hover:text-white" title="Reset Timer">
-              ↺
-            </button>
-          </div>
-        </div>
-
-        <!-- Scrubber Dots -->
-        <div class="mt-4 pt-3 border-t border-white/10">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-2 text-[11px] font-mono text-neutral-400">
-            <span>KEYBOARD: [1–4] SELECT OPTION • [← / →] PREV / NEXT QUESTION</span>
-            <label class="inline-flex items-center gap-2 cursor-pointer text-neutral-300">
-              <input type="checkbox" id="focusAutoAdvanceCheck" class="rounded border-white/20 bg-neutral-900" />
-              <span>Auto-Advance on Correct</span>
-            </label>
-          </div>
-          <div id="focusDotsContainer" class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto py-1"></div>
-        </div>
+    <!-- Left Thin Minimal Icon Rail (Inspired by Uploaded Cockpit Tablet UI) -->
+    <aside class="fixed left-4 top-1/2 -translate-y-1/2 z-30 hidden sm:flex flex-col items-center gap-2.5 rounded-3xl bg-neutral-900/75 backdrop-blur-2xl border border-white/[0.07] p-2 shadow-2xl">
+      <button type="button" id="speedrunExitHomeBtn" class="h-11 w-11 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all" title="Back to Dashboard (Esc)">
+        <i data-lucide="home" class="h-5 w-5"></i>
+      </button>
+      <button type="button" id="speedrunSwitchSolvingBtn" class="h-11 w-11 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all" title="Solving Mode">
+        <i data-lucide="layers" class="h-5 w-5"></i>
+      </button>
+      <div class="h-11 w-11 rounded-2xl flex items-center justify-center bg-gradient-to-b from-amber-500/25 to-amber-600/10 text-amber-300 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.2)]" title="Speedrun Mode Active">
+        <i data-lucide="zap" class="h-5 w-5"></i>
       </div>
+      <button type="button" id="focusShuffleBtn" class="h-11 w-11 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-amber-300 hover:bg-white/[0.08] transition-all" title="Shuffle Questions">
+        <i data-lucide="shuffle" class="h-5 w-5"></i>
+      </button>
+      <button type="button" id="speedrunToggleConfigBtn" class="h-11 w-11 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all" title="Speedrun Deck & Timer Settings">
+        <i data-lucide="sliders-horizontal" class="h-5 w-5"></i>
+      </button>
+      <button type="button" id="speedrunNativeFullscreenBtn" class="h-11 w-11 rounded-2xl flex items-center justify-center text-neutral-400 hover:text-sky-300 hover:bg-white/[0.08] transition-all" title="Toggle Fullscreen (F)">
+        <i data-lucide="maximize-2" class="h-4 w-4"></i>
+      </button>
+    </aside>
 
-      <!-- Active Single Question Card -->
-      <div id="focusSingleQuestionWrap"></div>
+    <!-- Mobile Top-Left Exit Pill -->
+    <div class="fixed top-4 left-4 z-30 flex sm:hidden items-center gap-2">
+      <button type="button" id="speedrunMobileExitBtn" class="rounded-full bg-neutral-900/85 backdrop-blur-xl border border-white/10 px-3.5 py-2 text-xs font-bold text-neutral-300 flex items-center gap-1.5">
+        <span>← Exit</span>
+      </button>
+      <button type="button" id="speedrunMobileConfigBtn" class="rounded-full bg-neutral-900/85 backdrop-blur-xl border border-white/10 p-2 text-neutral-300">
+        <i data-lucide="sliders-horizontal" class="h-4 w-4"></i>
+      </button>
+    </div>
 
-      <!-- Focus Navigation Bar -->
-      <div class="glass-panel rounded-2xl p-4 mt-5 flex flex-wrap items-center justify-between gap-3">
-        <button type="button" id="focusPrevBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-4 py-2.5 text-xs font-bold text-white">
-          ← Previous
-        </button>
-        <div class="flex items-center gap-2">
-          <button type="button" id="focusRevealSingleBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-3.5 py-2.5 text-xs font-semibold text-neutral-200">
-            👁️ Show/Hide Explanation
-          </button>
-          <button type="button" id="focusShuffleBtn" class="rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 px-3.5 py-2.5 text-xs font-semibold text-neutral-200">
-            🔀 Shuffle Deck
+    <!-- DRAGGABLE FLYING TIMER WIDGET (Floating Pill HUD) -->
+    <div id="flyingTimerWidget" style="top: 24px; right: 28px;" class="fixed z-40 cursor-grab active:cursor-grabbing rounded-full bg-neutral-900/85 backdrop-blur-2xl border border-white/15 px-4 py-2 shadow-[0_16px_40px_rgba(0,0,0,0.65),inset_0_1px_0_0_rgba(255,255,255,0.15)] flex items-center gap-3 transition-colors">
+      <span id="flyingTimerDot" class="h-2.5 w-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+      <span id="focusTimerReadout" class="font-mono text-xl sm:text-2xl font-extrabold tracking-tight text-white tabular-nums">00:30</span>
+      <div class="h-4 w-[1px] bg-white/10"></div>
+      <button type="button" id="focusTimerToggleBtn" class="h-7 w-7 rounded-full bg-amber-500/20 hover:bg-amber-500/35 border border-amber-500/40 text-amber-300 flex items-center justify-center text-xs font-bold transition-transform active:scale-90" title="Start / Pause Timer (Space)">
+        ▶
+      </button>
+      <button type="button" id="focusTimerResetBtn" class="h-7 w-7 rounded-full bg-white/[0.06] hover:bg-white/[0.14] text-neutral-300 hover:text-white flex items-center justify-center text-xs font-mono transition-transform active:scale-90" title="Reset Timer">
+        ↺
+      </button>
+      <button type="button" id="flyingTimerCyclePresetBtn" class="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/[0.05] hover:bg-white/[0.12] text-neutral-400 hover:text-amber-300 border border-white/10" title="Click to cycle 15s / 30s / 45s / 60s / Off">
+        30s
+      </button>
+    </div>
+
+    <!-- Popover Settings Drawer (Hidden by default so screen stays 100% minimal) -->
+    <div id="speedrunSettingsDrawer" class="hidden fixed left-20 top-1/2 -translate-y-1/2 z-40 w-72 rounded-3xl bg-neutral-900/95 backdrop-blur-2xl border border-white/15 p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+        <span class="font-mono text-xs font-bold uppercase tracking-wider text-amber-300">Speedrun Config</span>
+        <button type="button" id="speedrunCloseConfigBtn" class="text-neutral-400 hover:text-white text-xs font-mono">✕</button>
+      </div>
+      <div>
+        <label class="block font-mono text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">Question Deck</label>
+        <select id="focusDeckSelect" aria-label="Select Focus Deck" class="w-full rounded-xl bg-neutral-950 border border-white/10 px-3 py-2 text-xs font-semibold text-white">
+          <option value="all">All 151 Chosen Questions</option>
+          <option value="tier1">🔥 Tier 1 Must-Know (76 Qs)</option>
+          <option value="ch1">Chapter 1 Only (19 Qs)</option>
+          <option value="ch2">Chapter 2 Only (44 Qs)</option>
+          <option value="ch3">Chapter 3 Only (46 Qs)</option>
+          <option value="ch4">Chapter 4 Only (42 Qs)</option>
+          <option value="mistakes">Mistakes Only (✗)</option>
+          <option value="saved">Saved Only (★)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-mono text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">Timer Preset</label>
+        <select id="focusTimerModeSelect" aria-label="Select Speedrun Timer" class="w-full rounded-xl bg-neutral-950 border border-white/10 px-3 py-2 text-xs font-semibold text-amber-300">
+          <option value="off">Timer: Off</option>
+          <option value="q15">15s / Question</option>
+          <option value="q30" selected>30s / Question</option>
+          <option value="q45">45s / Question</option>
+          <option value="q60">60s / Question</option>
+          <option value="blitz5">5-Min Blitz</option>
+          <option value="blitz10">10-Min Sprint</option>
+        </select>
+      </div>
+      <label class="flex items-center justify-between cursor-pointer pt-1 text-xs text-neutral-300">
+        <span>Auto-Next on Correct</span>
+        <input type="checkbox" id="focusAutoAdvanceCheck" checked class="rounded border-white/20 bg-neutral-950" />
+      </label>
+      <!-- Hidden compatibility nodes so existing listeners stay 100% synced -->
+      <span id="focusStreakBadge" class="hidden">0</span>
+      <div id="focusDotsContainer" class="hidden"></div>
+    </div>
+
+    <!-- CENTERED ULTRA-MINIMAL QUESTION STAGE (Just Index + Question + Options + Circular Transport) -->
+    <div class="min-h-screen flex flex-col items-center justify-center px-5 sm:px-24 py-16 relative z-10">
+      <div class="w-full max-w-3xl mx-auto">
+
+        <!-- Minimal Index Header -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span id="focusPositionBadge" class="font-mono text-sm sm:text-base font-extrabold tracking-widest text-amber-400">
+              001 / 151
+            </span>
+            <span id="speedrunMinimalTopic" class="font-mono text-xs text-neutral-500">
+              CH 04 • Priority #1
+            </span>
+          </div>
+          <button type="button" id="focusRevealSingleBtn" class="font-mono text-xs text-neutral-500 hover:text-neutral-200 transition-colors">
+            [Explain]
           </button>
         </div>
-        <button type="button" id="focusNextBtn" class="rounded-xl bg-sky-500 hover:bg-sky-400 text-neutral-950 px-5 py-2.5 text-xs font-bold">
-          Next Question →
-        </button>
+
+        <!-- Thin Ambient Progress Scrubber Bar (Like Media Scrubber in Screenshot) -->
+        <div class="h-1 w-full bg-white/[0.07] rounded-full overflow-hidden mb-9">
+          <div id="speedrunScrubberFill" class="h-full bg-gradient-to-r from-amber-500 to-sky-400 transition-all duration-300" style="width: 1%;"></div>
+        </div>
+
+        <!-- Ultra-Clean Question & Options Container -->
+        <div id="focusSingleQuestionWrap"></div>
+
+        <!-- Minimal Media-Style Transport Controls (Prev | Central Play/Explain | Next) -->
+        <div class="mt-10 flex items-center justify-center gap-8">
+          <button type="button" id="focusPrevBtn" class="h-12 w-12 rounded-full bg-white/[0.03] hover:bg-white/[0.09] border border-white/10 text-neutral-300 hover:text-white flex items-center justify-center transition-all active:scale-90" title="Previous Question (←)">
+            <i data-lucide="skip-back" class="h-5 w-5"></i>
+          </button>
+
+          <button type="button" id="speedrunCenterActionBtn" class="h-16 w-16 rounded-full bg-gradient-to-b from-amber-500/30 to-amber-700/20 hover:from-amber-500/45 hover:to-amber-600/30 border border-amber-400/40 text-amber-200 flex items-center justify-center shadow-[0_0_35px_rgba(245,158,11,0.22)] transition-all active:scale-95" title="Toggle Explanation / Next">
+            <i data-lucide="eye" class="h-6 w-6"></i>
+          </button>
+
+          <button type="button" id="focusNextBtn" class="h-12 w-12 rounded-full bg-white/[0.03] hover:bg-white/[0.09] border border-white/10 text-neutral-300 hover:text-white flex items-center justify-center transition-all active:scale-90" title="Next Question (→)">
+            <i data-lucide="skip-forward" class="h-5 w-5"></i>
+          </button>
+        </div>
+
       </div>
     </div>
   </main>
@@ -829,7 +875,7 @@
       focusDeck: "all",
       focusIndex: 0,
       focusShuffledIds: null,
-      focusAutoAdvance: false,
+      focusAutoAdvance: true,
       focusTimerMode: "q30",
       focusTimerTotalSec: 30,
       focusTimerRemaining: 30,
@@ -1065,6 +1111,63 @@
       `;
     }
 
+    function buildMinimalSpeedrunCardHtml(q) {
+      const userAns = state.userAnswers[q.id];
+      const isAnswered = userAns !== undefined;
+      const isRevealed = !!state.revealedIds[q.id];
+      const showExp = isAnswered || isRevealed;
+      const isCorrect = isAnswered && userAns === q.ans;
+
+      const optsHtml = q.opts.map((optText, oIdx) => {
+        const letter = OPTION_LETTERS[oIdx] || String(oIdx + 1);
+        let btnCls = "bg-white/[0.025] hover:bg-white/[0.07] border-white/[0.08] hover:border-amber-400/40 text-neutral-200";
+        let keyCls = "bg-white/[0.05] border-white/10 text-neutral-400";
+
+        if (showExp) {
+          if (oIdx === q.ans) {
+            btnCls = "bg-emerald-500/15 border-emerald-500/60 text-white font-semibold shadow-[0_0_25px_rgba(16,185,129,0.15)]";
+            keyCls = "bg-emerald-500 text-neutral-950 border-emerald-400 font-bold";
+          } else if (isAnswered && oIdx === userAns && userAns !== q.ans) {
+            btnCls = "bg-rose-500/15 border-rose-500/60 text-rose-100";
+            keyCls = "bg-rose-500 text-white border-rose-400 font-bold";
+          } else {
+            btnCls = "bg-white/[0.01] border-white/[0.04] text-neutral-600 opacity-50";
+          }
+        }
+
+        return `
+          <button type="button" data-card-action="answer" data-qid="${q.id}" data-opt="${oIdx}" class="w-full text-left rounded-2xl border px-5 py-4 text-base sm:text-lg transition-all duration-150 flex items-center gap-4 ${btnCls}">
+            <span class="font-mono text-xs h-8 w-8 rounded-xl border flex items-center justify-center shrink-0 ${keyCls}">${letter}</span>
+            <span class="flex-1 leading-snug">${escapeHtml(optText)}</span>
+          </button>
+        `;
+      }).join("");
+
+      const expHtml = showExp ? `
+        <div class="mt-6 rounded-2xl bg-neutral-900/90 border border-white/10 px-6 py-4" dir="rtl">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="font-mono text-xs font-bold ${isAnswered && !isCorrect ? 'text-rose-400' : 'text-emerald-400'}">
+              ${isAnswered ? (isCorrect ? '✓ إجابة صحيحة' : '✗ الإجابة الصحيحة: ' + OPTION_LETTERS[q.ans]) : '👁️ الإجابة: ' + OPTION_LETTERS[q.ans]}
+            </span>
+            <button type="button" data-card-action="retry" data-qid="${q.id}" class="font-mono text-xs text-neutral-400 hover:text-white">↺ Retry</button>
+          </div>
+          <p class="rtl-arabic text-neutral-200 text-sm sm:text-base whitespace-pre-line m-0">${formatRtlExplanation(q.exp)}</p>
+        </div>
+      ` : "";
+
+      return `
+        <div>
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-[1.28] mb-8 text-left" dir="ltr">
+            ${escapeHtml(q.q)}
+          </h2>
+          <div class="grid grid-cols-1 gap-3" dir="ltr">
+            ${optsHtml}
+          </div>
+          ${expHtml}
+        </div>
+      `;
+    }
+
     // Solving Mode Filtering & Rendering
     function getSolvingFiltered() {
       return CHOSEN_QUESTIONS.filter(q => {
@@ -1240,43 +1343,47 @@
 
       state.focusIndex = ((state.focusIndex % deck.length) + deck.length) % deck.length;
       const curQ = deck[state.focusIndex];
-      posBadge.textContent = `Q ${state.focusIndex + 1} / ${deck.length}`;
+      posBadge.textContent = `${String(state.focusIndex + 1).padStart(3, "0")} / ${String(deck.length).padStart(3, "0")}`;
 
-      dots.innerHTML = deck.map((q, idx) => {
-        const ans = state.userAnswers[q.id];
-        let cls = "bg-white/[0.03] border-white/10 text-neutral-400";
-        if (ans !== undefined) {
-          cls = ans === q.ans
-            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-            : "bg-rose-500/20 border-rose-500/50 text-rose-300";
-        }
-        if (idx === state.focusIndex) {
-          cls += " ring-2 ring-sky-400 text-white font-extrabold";
-        }
-        return `<button type="button" data-focus-dot="${idx}" class="h-7 w-8 rounded-md border font-mono text-[11px] transition-all ${cls}">${idx + 1}</button>`;
-      }).join("");
+      const topicEl = document.getElementById("speedrunMinimalTopic");
+      if (topicEl) {
+        topicEl.textContent = `CH 0${curQ.ch} • #${String(curQ.id).padStart(3, "0")} • ${curQ.score}% PROB`;
+      }
+      const scrubEl = document.getElementById("speedrunScrubberFill");
+      if (scrubEl) {
+        scrubEl.style.width = `${Math.max(1, ((state.focusIndex + 1) / deck.length) * 100)}%`;
+      }
 
-      wrap.innerHTML = buildQuestionCardHtml(curQ);
+      wrap.innerHTML = buildMinimalSpeedrunCardHtml(curQ);
+      if (window.lucide) lucide.createIcons();
       syncFocusTimerUI();
     }
 
     function syncFocusTimerUI() {
       const readout = document.getElementById("focusTimerReadout");
       const toggleBtn = document.getElementById("focusTimerToggleBtn");
+      const dot = document.getElementById("flyingTimerDot");
+      const presetBtn = document.getElementById("flyingTimerCyclePresetBtn");
+      const labelMap = { off: "OFF", q15: "15s", q30: "30s", q45: "45s", q60: "60s", blitz5: "5m", blitz10: "10m" };
+      if (presetBtn) presetBtn.textContent = labelMap[state.focusTimerMode] || "30s";
+
       if (state.focusTimerMode === "off") {
         readout.textContent = "OFF";
-        readout.className = "font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-white/[0.03] border-white/10 text-neutral-500";
-        toggleBtn.textContent = "Disabled";
+        readout.className = "font-mono text-xl sm:text-2xl font-extrabold tracking-tight text-neutral-500 tabular-nums";
+        if (dot) dot.className = "h-2.5 w-2.5 rounded-full bg-neutral-600";
+        toggleBtn.textContent = "—";
         toggleBtn.disabled = true;
         return;
       }
       toggleBtn.disabled = false;
-      toggleBtn.textContent = state.focusTimerRunning ? "⏸ Pause" : "▶ Start";
+      toggleBtn.textContent = state.focusTimerRunning ? "⏸" : "▶";
       readout.textContent = formatTime(state.focusTimerRemaining);
       if (state.focusTimerRemaining <= 5) {
-        readout.className = "font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-rose-500/20 border-rose-500 text-rose-300 animate-pulse";
+        readout.className = "font-mono text-xl sm:text-2xl font-extrabold tracking-tight text-rose-400 tabular-nums animate-pulse";
+        if (dot) dot.className = "h-2.5 w-2.5 rounded-full bg-rose-500 animate-ping";
       } else {
-        readout.className = "font-mono text-2xl font-extrabold px-4 py-2 rounded-2xl border bg-amber-500/15 border-amber-500/30 text-amber-300";
+        readout.className = "font-mono text-xl sm:text-2xl font-extrabold tracking-tight text-white tabular-nums";
+        if (dot) dot.className = state.focusTimerRunning ? "h-2.5 w-2.5 rounded-full bg-amber-400 animate-pulse" : "h-2.5 w-2.5 rounded-full bg-neutral-500";
       }
     }
 
@@ -1346,7 +1453,7 @@
         if (state.solveTimerMode !== "off") startSolvingTimer();
       } else if (pageName === "focus") {
         renderFocusMode();
-        initFocusTimer(false);
+        initFocusTimer(true);
       }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -1767,6 +1874,80 @@
         handleCardAction(e, "solving");
       });
 
+      // Minimal Speedrun Cockpit & Draggable Flying Timer Widget Listeners
+      document.getElementById("speedrunExitHomeBtn").addEventListener("click", () => switchPage("dashboard"));
+      document.getElementById("speedrunMobileExitBtn").addEventListener("click", () => switchPage("dashboard"));
+      document.getElementById("speedrunSwitchSolvingBtn").addEventListener("click", () => switchPage("solving"));
+
+      const configDrawer = document.getElementById("speedrunSettingsDrawer");
+      document.getElementById("speedrunToggleConfigBtn").addEventListener("click", () => {
+        configDrawer.classList.toggle("hidden");
+      });
+      document.getElementById("speedrunMobileConfigBtn").addEventListener("click", () => {
+        configDrawer.classList.toggle("hidden");
+      });
+      document.getElementById("speedrunCloseConfigBtn").addEventListener("click", () => {
+        configDrawer.classList.add("hidden");
+      });
+
+      document.getElementById("speedrunCenterActionBtn").addEventListener("click", () => {
+        const deck = getFocusDeckList();
+        const curQ = deck[state.focusIndex];
+        if (!curQ) return;
+        state.revealedIds[curQ.id] = !state.revealedIds[curQ.id];
+        renderFocusMode();
+      });
+
+      document.getElementById("flyingTimerCyclePresetBtn").addEventListener("click", () => {
+        const order = ["q15", "q30", "q45", "q60", "off"];
+        const nextIdx = (order.indexOf(state.focusTimerMode) + 1) % order.length;
+        state.focusTimerMode = order[nextIdx];
+        document.getElementById("focusTimerModeSelect").value = state.focusTimerMode;
+        initFocusTimer(state.focusTimerMode !== "off");
+      });
+
+      document.getElementById("speedrunNativeFullscreenBtn").addEventListener("click", () => {
+        try {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+          } else {
+            document.exitFullscreen();
+          }
+        } catch (e) {}
+      });
+
+      // Make Flying Timer Widget Draggable Anywhere on Screen
+      const flyingWidget = document.getElementById("flyingTimerWidget");
+      let isDraggingTimer = false;
+      let dragOffsetX = 0;
+      let dragOffsetY = 0;
+
+      flyingWidget.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("button")) return;
+        isDraggingTimer = true;
+        const rect = flyingWidget.getBoundingClientRect();
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+        flyingWidget.setPointerCapture(e.pointerId);
+      });
+
+      flyingWidget.addEventListener("pointermove", (e) => {
+        if (!isDraggingTimer) return;
+        const maxX = window.innerWidth - flyingWidget.offsetWidth - 8;
+        const maxY = window.innerHeight - flyingWidget.offsetHeight - 8;
+        const nextX = Math.max(8, Math.min(maxX, e.clientX - dragOffsetX));
+        const nextY = Math.max(8, Math.min(maxY, e.clientY - dragOffsetY));
+        flyingWidget.style.left = `${nextX}px`;
+        flyingWidget.style.top = `${nextY}px`;
+        flyingWidget.style.right = "auto";
+      });
+
+      flyingWidget.addEventListener("pointerup", (e) => {
+        if (!isDraggingTimer) return;
+        isDraggingTimer = false;
+        try { flyingWidget.releasePointerCapture(e.pointerId); } catch (err) {}
+      });
+
       // Focus Arena Listeners
       document.getElementById("focusDeckSelect").addEventListener("change", (e) => {
         state.focusDeck = e.target.value;
@@ -1864,6 +2045,7 @@
         const curQ = deck[state.focusIndex];
         if (!curQ) return;
 
+        if (e.key === "Escape") { switchPage("dashboard"); return; }
         if (e.key === "ArrowRight") {
           state.focusIndex++;
           if (state.focusTimerMode.startsWith("q") && state.focusTimerRunning) {
